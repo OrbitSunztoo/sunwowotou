@@ -9,6 +9,25 @@
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+
+  <!-- 纯静态托管（如 GitHub Pages）没有后端时的提示 -->
+  <div class="login hidden" id="staticNotice">
+    <div class="login-card" id="staticCard">
+      <div class="brand-mark">✿</div>
+      <h1>这个地址没有后台服务</h1>
+      <p class="sub" id="staticHint">
+        GitHub Pages 只能放静态网页，管理后台需要连接你自己的服务器。<br>
+        把服务器地址带上再打开，例如：
+      </p>
+      <p class="url-example" id="staticUrl"></p>
+      <p class="hint">
+        服务器上按 DEPLOY.md 部署好后，地址就是 <code>https://你的域名/admin.html</code>，
+        直接打开就能登录改内容。
+      </p>
+      <p class="hint"><a href="../">← 回到博客首页</a></p>
+    </div>
+  </div>
+
   <!-- ============ 登录 ============ -->
   <div class="login hidden" id="loginView">
     <form class="login-card" id="loginForm" autocomplete="on">

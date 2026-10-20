@@ -5,7 +5,14 @@
 (() => {
   "use strict";
 
-  const API = "/api";
+  /* 后端地址：
+     · 本地/服务器站内打开（/admin.html）→ 同源 /api
+     · 从 GitHub Pages 这类纯静态托管打开时，没有后端，
+       用 ?api=https://你的域名 指定后端；也可以是相对路径 ../其它目录 */
+  const params = new URLSearchParams(location.search);
+  const API_PARAM = (params.get("api") || "").replace(/\/+$/, "");
+  const API = API_PARAM ? API_PARAM + "/api" : "/api";
+
   const $ = (sel, scope = document) => scope.querySelector(sel);
   const $$ = (sel, scope = document) => Array.from(scope.querySelectorAll(sel));
   const clone = (obj) => JSON.parse(JSON.stringify(obj));
@@ -152,6 +159,20 @@
   /* ---------------- 登录 ---------------- */
 
   async function boot() {
+    // 纯静态托管（GitHub Pages、gitee pages 等）没有 /api，先探一下
+    const sameOrigin = !API_PARAM;
+    if (sameOrigin) {
+      const reachable = await Promise.race([
+        fetch(`/api/session?probe=${Date.now()}`, { credentials: "same-origin" })
+          .then((res) => res.ok || res.status >= 400)
+          .catch(() => false),
+        new Promise((resolve) => setTimeout(() => resolve(false), 4000))
+      ]);
+      if (!reachable) {
+        showStaticNotice();
+        return;
+      }
+    }
     try {
       const session = await api("/session");
       $("#setupHint").hidden = session.setup;
@@ -171,10 +192,25 @@
   }
 
   function showLogin(username) {
+    $("#staticNotice").classList.add("hidden");
     $("#loginView").classList.remove("hidden");
     $("#appView").classList.add("hidden");
     if (username && !$("#loginForm").elements.username.value) $("#loginForm").elements.username.value = username;
     setTimeout(() => $("#loginForm").elements.password.focus(), 60);
+  }
+
+  function showStaticNotice() {
+    $("#loginView").classList.add("hidden");
+    $("#appView").classList.add("hidden");
+    $("#staticNotice").classList.remove("hidden");
+    const base = location.href.split("?")[0].split("#")[0];
+    const el = $("#staticUrl");
+    if (el) el.textContent = `${base}?api=https://你的服务器域名`;
+    const hint = $("#staticHint");
+    if (hint) {
+      hint.innerHTML =
+        "GitHub Pages 只能放静态网页，管理后台需要连接你自己的服务器（按 DEPLOY.md 部好之后就自带后台）。<br>把服务器地址当作参数带上再打开，例如：";
+    }
   }
 
   function showApp() {

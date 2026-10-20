@@ -665,3 +665,17 @@ a { color: var(--lav-dark); }
   .editor-shell { border-radius: 22px 22px 0 0; width: 100%; }
   .editor { align-items: flex-end; }
 }
+
+/* 静态托管提示里的地址示例 */
+.url-example {
+  margin: 10px 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(185, 168, 227, 0.14);
+  color: var(--ink, #453a56);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  word-break: break-all;
+  line-height: 1.6;
+  user-select: all;
+}
