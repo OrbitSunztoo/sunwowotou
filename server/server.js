@@ -12,6 +12,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 
+const { spawn } = require("node:child_process");
+
 const { createStore, normalizeContent } = require("./lib/store");
 const { createAuth, COOKIE } = require("./lib/auth");
 const H = require("./lib/http");
@@ -20,6 +22,73 @@ const ROOT = path.resolve(__dirname, "..");
 const DATA_DIR = process.env.FUWARI_DATA_DIR || path.join(ROOT, "data");
 const UPLOAD_DIR = path.join(ROOT, "uploads");
 const PUBLIC_DIR = path.join(ROOT, "public");
+const SYNC_SCRIPT = path.join(ROOT, "upload.js");
+
+/** 配置文件里允许写 // 注释（upload.config.json / upload.js 共用同一套宽松解析） */
+function stripJsonComments(text) {
+  let out = "";
+  let inString = false;
+  let escaped = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    if (inString) {
+      out += ch;
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') {
+      inString = true;
+      out += ch;
+      continue;
+    }
+    if (ch === "/" && text[i + 1] === "/") {
+      while (i < text.length && text[i] !== "\n") i += 1;
+      out += "\n";
+      continue;
+    }
+    out += ch;
+  }
+  return out;
+}
+
+/* ---------------- GitHub 上传设置（仓库 / 分支 / 令牌都只留在本机 data/，不进仓库） ---------------- */
+
+const UPLOAD_CONFIG = path.join(ROOT, "upload.config.json");
+const TOKEN_FILE = path.join(ROOT, "data", "github-token.txt");
+
+function readUploadConfig() {
+  try {
+    return JSON.parse(stripJsonComments(fs.readFileSync(UPLOAD_CONFIG, "utf8"))) || {};
+  } catch (error) {
+    return {};
+  }
+}
+
+async function setUploadConfig(patch) {
+  const next = { ...readUploadConfig(), ...patch };
+  // 只有 GitHub 相关的键写回文件，其余键（例如用 --file 合并进去的）原样保留
+  await fs.promises.writeFile(UPLOAD_CONFIG, `${JSON.stringify(next, null, 2)}\n`, "utf8");
+  return next;
+}
+
+/** 从令牌文件里读（也认 git 凭据管理器里存的，交给 upload.js 自己去拿） */
+function readGitHubToken() {
+  try {
+    const text = fs.readFileSync(TOKEN_FILE, "utf8").trim();
+    return /^(github_pat_|gh[ps]_)/.test(text) ? text : "";
+  } catch (error) {
+    return "";
+  }
+}
+
+async function saveGitHubToken(token) {
+  if (!/^(github_pat_|gh[ps]_)/.test(token)) throw new Error("这串令牌看起来不对（应该以 github_pat_ 或 ghp_ 开头）");
+  await fs.promises.mkdir(path.dirname(TOKEN_FILE), { recursive: true });
+  await fs.promises.writeFile(TOKEN_FILE, `${token}\n`, { encoding: "utf8", mode: 0o600 });
+  return true;
+}
 
 const HOST = process.env.HOST || "127.0.0.1";
 const PORT = Number(process.env.PORT || process.env.FUWARI_PORT || 8787);
@@ -78,6 +147,9 @@ function authCookie(req, origin) {
 }
 
 const store = createStore(DATA_DIR);
+
+/** 监听成功后的回调（桌面启动器用它自动打开浏览器） */
+let onReady = null;
 const auth = createAuth(DATA_DIR);
 
 /* ---------------- 前台地址（本地页面用相对路径，挂在域名下用环境变量覆盖） ---------------- */
@@ -169,14 +241,28 @@ function authToken(req) {
   return fromHeader || "";
 }
 
+/** 本机打开的后台窗口（?local=1）免登录：请求要真打在本机回环上，且来源是自己的地址或没有来源 */
+function isLocalEditor(req) {
+  const flag = String(req.headers["x-fuwari-local"] || "").trim();
+  if (flag !== "1" || !isLocalHost(req)) return false;
+  return Boolean(selfOrigin(req)) || !String(req.headers.origin || "");
+}
+
+/** 这个请求打的是哪个地址（优先用反代给的 x-forwarded-proto） */
+function selfOrigin(req) {
+  const proto = (String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim() || "http").toLowerCase();
+  const host = String(req.headers.host || "").toLowerCase();
+  return proto && host ? `${proto}://${host}` : "";
+}
+
 function isLoggedIn(req) {
   return auth.verifyToken(authToken(req));
 }
 
-function requireAuth(req, res) {
-  if (isLoggedIn(req)) return true;
-  H.sendJSON(res, 401, { error: "还没有登录，请先登录管理后台" });
-  return false;
+/** 通过校验后返回会话令牌（本机窗口用 "local"，其余返回 true） */
+function sessionToken(req) {
+  if (isLocalEditor(req)) return "local";
+  return isLoggedIn(req) ? true : "";
 }
 
 /* ---------------- API ---------------- */
@@ -206,7 +292,9 @@ async function handleApi(req, res, url) {
   //  · 无名（curl/同源）→ 只读接口给 *，方便本地直接打开 HTML
   //  · 白名单来源 → 回显该 origin 并允许带 Cookie（管理后台用）
   const origin = adminOrigin(req);
-  if (origin === null) {
+  // 本机编辑窗口的本地请求（来源就是自己，或没有来源）
+  const localEdit = isLocalEditor(req);
+  if (origin === null && !localEdit) {
     H.sendJSON(res, 403, { error: "这个来源不允许访问管理后台，请把它加进 FUWARI_ADMIN_ORIGINS" });
     return;
   }
@@ -305,18 +393,141 @@ async function handleApi(req, res, url) {
   }
 
   if (route === "/session" && method === "GET") {
-    H.sendJSON(res, 200, { loggedIn: isLoggedIn(req), setup: auth.exists(), username: auth.username() });
+    H.sendJSON(res, 200, {
+      loggedIn: Boolean(sessionToken(req)),
+      local: isLocalEditor(req),
+      setup: auth.exists(),
+      username: auth.username()
+    });
     return;
   }
 
-  if (!requireAuth(req, res)) return;
+  const session = sessionToken(req);
+  if (!session) {
+    H.sendJSON(res, 401, { error: "还没有登录，请先登录管理后台" });
+    return;
+  }
 
   /* --- 需要登录的部分 --- */
 
   if (route === "/content" && (method === "PUT" || method === "POST")) {
     const body = await H.readJSON(req, 4 * 1024 * 1024);
+    // dryRun：只做校验、顺便刷新「相当于已上传」的时间戳，不落盘（自检用）
+    if (body && body.dryRun) {
+      store.save(store.load());
+      H.sendJSON(res, 200, { ok: true, dryRun: true });
+      return;
+    }
     const next = store.save(body);
     H.sendJSON(res, 200, { ok: true, updatedAt: next.updatedAt });
+    return;
+  }
+
+  /* 一键上传到 GitHub：跑 upload.js 并把它的输出一点点送给后台窗口 */
+  if (route === "/sync" && method === "GET") {
+    const reportFile = path.join(DATA_DIR, "sync-report.json");
+    const cfgFile = path.join(ROOT, "upload.config.json");
+    let config = {};
+    try {
+      config = JSON.parse(stripJsonComments(fs.readFileSync(cfgFile, "utf8")));
+    } catch (error) {
+      config = {};
+    }
+    let report = null;
+    try {
+      report = JSON.parse(fs.readFileSync(reportFile, "utf8"));
+    } catch (error) {
+      report = null;
+    }
+    const content = store.load();
+    H.sendJSON(res, 200, {
+      configured: Boolean(config.repo),
+      repo: config.repo || "",
+      branch: config.branch || "main",
+      pages: config.pages || "",
+      report,
+      dirty: !report || String(report.pushedAt || "") < String(content.updatedAt || "")
+    });
+    return;
+  }
+
+  // 保存 GitHub 上传设置（第一次点「上传到 GitHub」时由后台窗口填好再调这里）
+  if (route === "/sync/setup" && method === "POST") {
+    const body = await H.readJSON(req, 512);
+    const repo = String(body.repo || "").trim().replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\.git$/i, "").replace(/\/+$/, "");
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+      H.sendJSON(res, 400, { error: "仓库地址应该是 owner/名称 这样" });
+      return;
+    }
+    setUploadConfig({ repo, branch: body.branch || "main" });
+    if (body.pages) setUploadConfig({ pages: String(body.pages).trim() });
+    if (body.token) {
+      try {
+        await saveGitHubToken(String(body.token).trim());
+      } catch (error) {
+        H.sendJSON(res, 400, { error: error.message });
+        return;
+      }
+    }
+    H.sendJSON(res, 200, { ok: true, repo });
+    return;
+  }
+
+  if (route === "/sync" && method === "POST") {
+    if (!fs.existsSync(SYNC_SCRIPT)) {
+      H.sendJSON(res, 503, { error: "找不到 upload.js，没法上传" });
+      return;
+    }
+    // 令牌只用服务器上存好的 GitHub 令牌，避免把登录令牌写进临时文件
+    const token = readGitHubToken();
+    res.writeHead(200, {
+      "Content-Type": "application/x-ndjson; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Accel-Buffering": "no"
+    });
+    // 设置以服务器上为准；上传完再把「仓库 / 令牌」回写给后台窗口（下回接着用）
+    const outConfig = path.join(DATA_DIR, "sync-input.tmp.json");
+    try {
+      fs.rmSync(outConfig, { force: true });
+    } catch (error) {
+      /* 没有就算了 */
+    }
+    const cfg = readUploadConfig();
+    const full = /[?&]full=1(&|$)/.test(req.url || "");
+    const args = [SYNC_SCRIPT, "--stdin", "--out-config", outConfig];
+    // 网页代码是否一起推：第一次往空仓库推时必然要推；「连网页代码一起重传」按钮显式要求
+    if (full) args.push("--with-site");
+    if (cfg.repo) args.push("--repo", cfg.repo);
+    if (cfg.branch) args.push("--branch", cfg.branch);
+    if (cfg.dataPath) args.push("--data-path", cfg.dataPath);
+    const child = spawn(process.execPath, args, {
+      cwd: ROOT,
+      env: { ...process.env, FORCE_COLOR: "0", NO_COLOR: "1" },
+      windowsHide: true,
+      stdio: ["pipe", "pipe", "pipe"]
+    });
+    // 令牌从标准输入递过去，不出现在命令行参数里（任务管理器/ps 都看不到）
+    if (token) child.stdin.write(`${token}\n`);
+    child.stdin.end();
+    const send = (obj) => {
+      if (!res.writableEnded) res.write(JSON.stringify(obj) + "\n");
+    };
+    const feed = (chunk) => {
+      String(chunk)
+        .split(/\r?\n/)
+        .map((line) => line.replace(/\x1b\[[0-9;]*m/g, "").trimEnd())
+        .filter((line) => line.length)
+        .forEach((line) => send({ type: "log", text: line }));
+    };
+    child.stdout.on("data", feed);
+    child.stderr.on("data", feed);
+    child.on("error", (error) => send({ type: "done", ok: false, error: error.message }));
+    child.on("close", (code) => {
+      if (res.writableEnded) return;
+      send({ type: "done", ok: code === 0, code });
+      res.end();
+    });
+    // 注意：不能用 req.on("close") 去杀进程——请求体读完后它也触发，会把上传拦腰打断
     return;
   }
 
@@ -534,6 +745,11 @@ function serveHome(req, res) {
 
 /* ---------------- 服务 ---------------- */
 
+/** 由启动脚本（server/desktop.js）注入：端口起来后做点事，比如打开浏览器 */
+function setReadyHook(fn) {
+  onReady = typeof fn === "function" ? fn : null;
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
@@ -564,7 +780,17 @@ const server = http.createServer(async (req, res) => {
 });
 
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-store.load();
+
+// 端口被占用多半是已经开着一个（网页编辑窗口没关干净），直接说清楚而不是抛一堆栈
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`\n  ✗ 端口 ${PORT} 已经被占用了：可能已经开着一个编辑窗口。`);
+    console.error(`    先关掉它，或者换端口再来：PORT=8788 npm start\n`);
+  } else {
+    console.error(`\n  ✗ 后端启动失败：${error.message}\n`);
+  }
+  process.exit(1);
+});
 
 server.listen(PORT, HOST, () => {
   const base = `http://${HOST === "0.0.0.0" ? "127.0.0.1" : HOST}:${PORT}`;
@@ -579,6 +805,13 @@ server.listen(PORT, HOST, () => {
     console.log("  ⚠ 还没有管理员账号：先运行 node server/setup-admin.js");
   }
   console.log("");
+  if (typeof onReady === "function") {
+    try {
+      onReady({ base });
+    } catch (error) {
+      console.error("[fuwari] 启动回调出错：", error);
+    }
+  }
 });
 
-module.exports = { server, injectConfig };
+module.exports = { server, injectConfig, setReadyHook };

@@ -1,5 +1,8 @@
 # 部署指南 · ふわり Fuwari
 
+> **先看这里**：个人博客最常见的做法是 **GitHub Pages + 本地编辑窗口**——双击 `打开后台.cmd` 改内容，点「☁ 上传到 GitHub」，网站自动更新，不用买服务器。
+> 这份文档写的是「**确实要一台 VPS**」的情况（想真正接收访客留言、想要自己的域名等等）。第 10 节有两条路线的对比。
+
 这套站点是「零依赖 Node 程序 + 一个 JSON 数据文件 + uploads 图片目录」，没有数据库、没有构建步骤。
 上线只需要三件事：**把文件传上去 → 用守护进程跑起来 → 前面挂 Nginx + HTTPS**。
 
@@ -16,7 +19,8 @@
 | `server/` `public/` | ✅ | 服务端与后台界面 |
 | `data/content.json` | ✅ | **你所有改过的内容都在这里**，别用仓库里的默认版覆盖它 |
 | `data/auth.json` | ⚠️ | 管理员口令。带上去就能直接用现在的账号；不想带就删掉，上线后重新设置 |
-| `uploads/` | ✅ | 后台上传过的照片（现在是空的，也要建目录） |
+| `data/github-token.txt` `upload.config.json` | ❌ | 这是本地「一键上传」用的，服务器上不需要，也别传 |
+| `uploads/` | ✅ | 编辑窗口里上传过的照片（现在本地是原图，服务器上直接用也行） |
 | `docs/` `README.md` `.gitignore` | 可选 | 截图和说明，不影响运行 |
 
 > 口令与内容都属于隐私，用 `scp` / 压缩包上传，别提交到公开仓库。
@@ -80,19 +84,21 @@ sudo -u fuwari git clone 你的仓库地址 /opt/fuwari
 
 ## 3. 首次启动前：设置管理员口令
 
-生产环境**不要**沿用本地那套 `admin / fuwari2026`。
+生产环境**不要**沿用本地编辑窗口里那套随机口令（它在 `data/desktop-account.txt`）。
 
 ```bash
 cd /opt/fuwari
 
 # 情况一：上传了 data/content.json（保留你改过的内容），但不想带本地口令
-sudo rm -f data/auth.json
+sudo rm -f data/auth.json data/desktop-account.txt
 sudo -u fuwari node server/setup-admin.js
 #   交互输入用户名 + 8 位以上口令，或直接：
 #   sudo -u fuwari node server/setup-admin.js 你的用户名 你的口令
 
-# 情况二：什么都不改，直接用现有的 data/auth.json 登录（登录后再到后台改口令）
+# 情况二：先不清空，启动后用 desktop-account.txt 里的口令登录，再在后台改口令
 ```
+
+> 服务器上打开 `/admin.html` 是要登录的（只有本机 `127.0.0.1` 才走「免登录」通道），记得把这个口令记好。
 
 ---
 
@@ -293,35 +299,47 @@ sudo systemctl restart fuwari
 
 ---
 
-## 10. 只想放静态页（不做后台）
+## 10. 只想放静态页（推荐：GitHub Pages + 本地编辑窗口）
 
-如果你的服务器只能放静态文件（GitHub Pages、对象存储、宝塔静态站点），**不用改任何配置**，前台会自己发现没有 `/api/content` 然后改读站点根目录的 `content.json`：
+个人博客大多数时候**根本不需要服务器**。这套代码已经内置了「本地改 + 一键上传」的工作流：
 
-1. 在本地跑一次 `npm start`，打开后台把内容改好，然后访问 <http://127.0.0.1:8787/api/backup> 下载 `content.json`；
+1. 双击 `打开后台.cmd`，在本地编辑窗口里改内容（免登录）；
+2. 点右上角 **☁ 上传到 GitHub**，内容、图片、网页代码一起推到仓库；
+3. `.github/workflows/pages.yml` 会自动把网站发布到 `https://你的用户名.github.io/仓库名/`。
+
+详细步骤（含 GitHub 令牌怎么拿）见 README 的「三分钟上手」。这个方案下：
+
+- **留言 / 点赞**：GitHub Pages 是纯静态的，收不到新留言。访客发的留言和赞只存在访客自己的浏览器里（页面会提示“糖先放进本地罐子啦”）。你在编辑窗口里写/删的留言会随着上传发布出去，所有人可见。
+- **图片**：上传时自动转 webp 并改写引用，仓库不会越堆越大。
+
+### 只是把静态文件放到自己的主机上
+
+同样不用改任何配置——前台发现没有 `/api/content` 就会改读站点根目录的 `content.json`：
+
+1. 在编辑窗口里点「下载内容备份（JSON）」，或直接复制仓库根的 `content.json`；
 2. 上传这些文件到网站根目录：
 
 ```
 index.html
 assets/
-uploads/          ← 后台传过的图片，路径要和 content.json 里一致
-content.json      ← 第 1 步下载的文件
+uploads/          ← 上传过的图片，路径要和 content.json 里一致
+content.json      ← 第 1 步得到的文件
 ```
 
 3. 打开站点即可：文章、图集、合照墙、角色卡、纪念日全部正常读取，`body` 会带上 `is-static` 标记。
 
-**静态模式的留言**：没有服务端，所以留言、点赞保存在浏览器 localStorage 里（只对当前设备可见，提交时会提示“糖先放进本地罐子啦”）。
 想显式指定数据文件位置，也可以在 `index.html` 里把 `<!--FUWARI:CONFIG-->` 换成：
 
 ```html
 <script>window.FUWARI_CONFIG = { apiBase: "", dataUrl: "./content.json" };</script>
 ```
 
-以后换成 VPS，把 `data/content.json`（或根目录 `content.json`）一并传上去、跑 `npm start`，留言就自动回到服务端保存，接口路径无需改代码。
+以后换成 VPS，把 `data/content.json` 一并传上去、跑 `npm start`，留言就自动回到服务端保存，接口路径无需改代码。
 
 > 如果图片在子目录部署时 404，说明 `content.json` 里存的是 `/uploads/...` 这类以斜杠开头的绝对路径。
 > 用 `node server/migrate-static.js 旧的content.json` 跑一遍，会写成 `uploads/...` 的相对路径（原文件自动备份）。
 
-> 结论：**建议用 VPS + systemd + Nginx**，上面第 4、5 节已经写好了配置，也可以直接执行仓库根的 `deploy.sh`（见第 11 节），之后在后台点几下就能改内容，最省心。
+> 结论：只做个人博客 → **GitHub Pages + 本地编辑窗口**最省心；想真正接收访客留言 → 用第 4、5 节的 VPS + systemd + Nginx，或者直接跑 `deploy.sh`（见第 11 节）。
 
 ---
 
