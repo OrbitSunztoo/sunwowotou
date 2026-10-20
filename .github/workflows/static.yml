@@ -33,6 +33,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Verify content files
+        run: |
+          test -f content.json && echo "content.json ok" || { echo "::error::content.json missing"; exit 1; }
+          if [ -d uploads ]; then echo "uploads files: $(find uploads -type f | wc -l)"; else echo "::warning::uploads folder missing"; fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
