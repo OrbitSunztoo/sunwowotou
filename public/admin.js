@@ -12,6 +12,10 @@
   const params = new URLSearchParams(location.search);
   let API_PARAM = (params.get("api") || "").replace(/\/+$/, "");
   let API = API_PARAM ? API_PARAM + "/api" : "/api";
+  // 本机编辑窗口（桌面程序打开的 ?local=1）：这个地址只监听本机回环，所以免登录直接进后台
+  let LOCAL_ENTRY = params.get("local") === "1";
+  let LOCAL_SESSION = false;
+  const LOCAL_HEADER = () => (LOCAL_ENTRY && LOCAL_SESSION ? { "X-Fuwari-Local": "1" } : {});
 
   const $ = (sel, scope = document) => scope.querySelector(sel);
   const $$ = (sel, scope = document) => Array.from(scope.querySelectorAll(sel));
@@ -110,6 +114,8 @@
     const headers = { ...(options.body && !(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}) };
     const token = readToken();
     if (token) headers["X-Fuwari-Auth"] = token;
+    if (LOCAL_ENTRY) headers["X-Fuwari-Local"] = "1";
+    Object.assign(headers, LOCAL_HEADER());
     const res = await fetch(API + path, { credentials: CREDENTIALS, ...options, headers });
     let data = null;
     try {
@@ -119,6 +125,16 @@
     }
     if (res.status === 401) {
       writeToken("");
+      // 顺手清掉这台机器上可能残留的会话记录（安全起见）
+      try {
+        for (const key of ["fuwari-session", "fuwari-auth"]) localStorage.removeItem(key);
+      } catch (error) {
+        /* 隐私模式 */
+      }
+      if (LOCAL_ENTRY) {
+        LOCAL_ENTRY = false;
+        LOCAL_SESSION = false;
+      }
       showLogin();
       throw new Error("登录已过期，请重新登录");
     }
@@ -265,6 +281,154 @@
 
   /* ---------------- 登录 ---------------- */
 
+  /* ---------------- 一键上传到 GitHub ---------------- */
+
+  let syncState = null;
+
+  async function checkSync() {
+    const button = $("#syncBtn");
+    try {
+      syncState = await api("/sync");
+    } catch (error) {
+      if (button) button.hidden = true;
+      return;
+    }
+    if (!button) return;
+    button.hidden = LOCAL_MODE;
+    if (!LOCAL_MODE) {
+      button.classList.toggle("is-dirty", Boolean(syncState.dirty));
+      button.title = syncState.configured
+        ? `${syncState.repo}（${syncState.branch}）${syncState.dirty ? "· 有还没上传的修改" : "· 云端已是最新"}`
+        : "第一次上传会让你填仓库和 GitHub 令牌";
+      button.textContent = syncState.configured ? "☁ 上传到 GitHub" : "☁ 开始设置上传";
+      const tip = $("#syncRepo");
+      if (tip && !tip.value && syncState.repo) tip.value = syncState.repo;
+      fillSyncPanel();
+    }
+  }
+
+  function syncLogLine(text, kind) {
+    const box = $("#syncLog");
+    if (!box) return;
+    const line = document.createElement("div");
+    if (kind) line.className = `is-${kind}`;
+    line.textContent = text;
+    box.append(line);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function runSync(options = {}) {
+    if (!options.quiet && dirty && !confirm("还有没保存的修改，先保存再上传吗？\n（点「取消」就直接上传已经保存过的内容）")) {
+      await save();
+      if (dirty) return;
+    }
+    const button = $("#syncBtn");
+    const box = $("#syncBox");
+    button.disabled = true;
+    button.textContent = "☁ 上传中…";
+    box.classList.remove("hidden");
+    $("#syncLog").innerHTML = "";
+    $("#syncTitle").textContent = "正在上传…";
+    $("#syncSub").textContent = "";
+    try {
+      const token = readToken();
+      const res = await fetch(`${API}/sync${options.full ? "?full=1" : ""}`, {
+        method: "POST",
+        credentials: CREDENTIALS,
+        headers: { ...(token ? { "X-Fuwari-Auth": token } : {}), ...LOCAL_HEADER() }
+      });
+      if (res.status === 401) {
+        writeToken("");
+        showLogin();
+        throw new Error("登录已过期");
+      }
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error((data && data.error) || `上传接口出错（${res.status}）`);
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let result = null;
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+        for (const raw of lines) {
+          if (!raw.trim()) continue;
+          let msg;
+          try {
+            msg = JSON.parse(raw);
+          } catch (error) {
+            continue;
+          }
+          if (msg.type === "done") result = msg;
+          else if (msg.type === "log") syncLogLine(msg.text, /✔|完成/.test(msg.text) ? "ok" : /✗|失败|错误|不对|404/.test(msg.text) ? "err" : "");
+        }
+      }
+      if (result && result.ok) {
+        $("#syncTitle").textContent = "上传完成 ✿";
+        $("#syncSub").textContent = "GitHub Pages 大约 30～90 秒后更新";
+        toast("已经传到 GitHub 啦，稍等一下网站就会更新 ✿", "ok");
+        await checkSync();
+      } else {
+        $("#syncTitle").textContent = "上传没有完成";
+        $("#syncSub").textContent = "看看下面的说明";
+        toast("上传没成功，具体原因看下面的日志", "error");
+      }
+    } catch (error) {
+      $("#syncTitle").textContent = "上传出错";
+      syncLogLine(error.message, "err");
+      toast(error.message, "error");
+    } finally {
+      button.disabled = false;
+      button.textContent = syncState && syncState.configured ? "☁ 上传到 GitHub" : "☁ 开始设置上传";
+    }
+  }
+
+  $("#syncBtn").addEventListener("click", () => {
+    if (syncState && !syncState.configured) {
+      // 第一次用：先把「仓库 + 令牌」填好，填完自动接着上传
+      const box = $("#syncSetup");
+      box.classList.remove("hidden");
+      $("#syncRepo").focus();
+      return;
+    }
+    runSync();
+  });
+  $("#syncSetupClose").addEventListener("click", () => $("#syncSetup").classList.add("hidden"));
+  $("#syncSetupInputCancel").addEventListener("click", () => $("#syncSetup").classList.add("hidden"));
+
+  $("#syncSetup").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const repoInput = $("#syncRepo");
+    const tokenInput = $("#syncToken");
+    const button = $("#syncSetupSave");
+    const repo = repoInput.value.trim().replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\.git$/i, "").replace(/\/+$/, "");
+    const token = tokenInput.value.trim();
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return toast("仓库写成 owner/名称 这样，例如 OrbitSunztoo/sunwowotou", "error");
+    if (!/^(github_pat_|gh[ps]_)/.test(token)) return toast("令牌应该以 github_pat_ 或 ghp_ 开头，再看一眼？", "error");
+    button.disabled = true;
+    button.textContent = "正在保存…";
+    try {
+      await api("/sync/setup", { method: "POST", body: JSON.stringify({ repo, token }) });
+      tokenInput.value = "";
+      $("#syncSetup").classList.add("hidden");
+      await checkSync();
+      toast("设置好啦，开始上传 ✿", "ok");
+      await runSync();
+    } catch (error) {
+      toast(error.message, "error");
+    } finally {
+      button.disabled = false;
+      button.textContent = "保存并上传";
+    }
+  });
+
+  $("#syncClose").addEventListener("click", () => $("#syncBox").classList.add("hidden"));
+
   async function boot() {
     // 纯静态托管（GitHub Pages、gitee pages 等）没有 /api，先探一下
     if (!API_PARAM) {
@@ -290,6 +454,7 @@
     }
     try {
       const session = await api("/session");
+      LOCAL_SESSION = Boolean(session.local);
       $("#setupHint").hidden = session.setup;
       if (!session.setup) {
         $("#loginHint").textContent = "还没有设置管理员账号，先在项目目录运行 node server/setup-admin.js。";
@@ -333,6 +498,7 @@
     $("#appView").classList.remove("hidden");
     renderAll();
     renderTab(currentTab);
+    checkSync();
   }
 
   $("#loginForm").addEventListener("submit", async (event) => {
@@ -461,7 +627,15 @@
     $$(".tab-panel").forEach((panel) => panel.classList.toggle("hidden", panel.dataset.panel !== tab));
     $("#pageTitle").textContent = TITLES[tab][0];
     $("#pageCrumb").textContent = TITLES[tab][1];
-    if (tab === "account") $("#accUser").value = "";
+    if (tab === "account") {
+      $("#accUser").value = "";
+      const mode = $("#accMode");
+      if (mode) {
+        const local = LOCAL_ENTRY && LOCAL_SESSION;
+        mode.textContent = local ? "本机编辑窗口 · 免登录" : "已登录";
+        mode.classList.toggle("is-local", local);
+      }
+    }
   }
 
   $$(".tab").forEach((btn) =>
@@ -1397,8 +1571,17 @@
 
   /* ---------------- 账号 / 备份 ---------------- */
 
+  fillSyncPanel();
+
   $("#accSave").addEventListener("click", async () => {
     if (LOCAL_MODE) return toast("本机模式下没有服务器账号可改，部署到服务器后再来设置", "error");
+    if (LOCAL_ENTRY !== Boolean(LOCAL_SESSION)) {
+      // 本机编辑窗口为了省事不登录，但改口令必须先验旧口令（点「退出登录」就能用账号密码登录）
+      LOCAL_ENTRY = false;
+      LOCAL_SESSION = false;
+      toast("改口令要先验证旧口令，帮你打开登录框啦", "");
+      return showLogin();
+    }
     const current = $("#accCurrent").value;
     const next = $("#accNext").value;
     const next2 = $("#accNext2").value;
@@ -1415,6 +1598,47 @@
     } catch (error) {
       toast(error.message, "error");
     }
+  });
+
+  /* --- 账号与备份里的「上传到 GitHub」设置 --- */
+  function fillSyncPanel() {
+    if (!syncState) return;
+    const repo = $("#accRepo");
+    const branch = $("#accBranch");
+    const state = $("#accSyncState");
+    if (repo && document.activeElement !== repo) repo.value = syncState.repo || "";
+    if (branch && document.activeElement !== branch) branch.value = syncState.branch || "main";
+    if (state) {
+      state.textContent = syncState.configured
+        ? `${syncState.repo}（${syncState.branch}）${syncState.dirty ? "· 有还没上传的修改" : "· 云端已是最新"}`
+        : "还没有设置仓库";
+    }
+  }
+
+  $("#accSyncSave").addEventListener("click", async () => {
+    const repo = $("#accRepo").value.trim().replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\.git$/i, "").replace(/\/+$/, "");
+    const branch = $("#accBranch").value.trim() || "main";
+    const token = $("#accToken").value.trim();
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return toast("仓库写成 owner/名称 这样，例如 OrbitSunztoo/sunwowotou", "error");
+    if (token && !/^(github_pat_|gh[ps]_)/.test(token)) return toast("令牌应该以 github_pat_ 或 ghp_ 开头，再看一眼？", "error");
+    const button = $("#accSyncSave");
+    button.disabled = true;
+    try {
+      await api("/sync/setup", { method: "POST", body: JSON.stringify({ repo, branch, token }) });
+      $("#accToken").value = "";
+      await checkSync();
+      fillSyncPanel();
+      toast("上传设置保存好啦 ✿", "ok");
+    } catch (error) {
+      toast(error.message, "error");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  $("#accSyncFull").addEventListener("click", async () => {
+    if (!syncState || !syncState.configured) return toast("先把仓库和令牌保存一下", "error");
+    await runSync({ full: true, quiet: true });
   });
 
   function downloadJSON(data, name) {

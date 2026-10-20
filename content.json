@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-20T10:47:34.004Z",
+  "updatedAt": "2026-10-20T11:05:17.568Z",
   "site": {
     "brand": "ふわり",
     "brandEn": "Fuwari",
     "tagline": "把日常，过成一颗糖。",
     "logo": "assets/img/logo.svg",
-    "title": "ふわり Fuwari · sun的二次元慢速手帐",
+    "title": "ふわり Fuwari · 柚子的二次元慢速手帐",
     "eyebrowYear": "2026",
     "heroTitleTop": "把日常，",
     "heroTitleBottom": "过成一颗糖。",
-    "lede": "这里是sun的慢速手帐。记录窗边四点的光、VRChat 的星海，还有一个叫窝窝头的人。",
-    "heroImage": "uploads/1792474780682-b6d89270.webp",
+    "lede": "这里是柚子的慢速手帐。记录窗边四点的光、VRChat 的星海，还有一个叫星澈的人。",
+    "heroImage": "assets/img/hero-girl.svg",
     "heroCaption": "「 窗边的下午四点 」",
     "moodLabel": "今日心情",
     "moodWord": "晴转草莓",
@@ -32,26 +32,40 @@
     "links": [
       {
         "label": "VRChat",
-        "value": "sun",
-        "toast": "VRChat 搜索 sun'z'p，记得敲门哦。"
+        "value": "Yuzu_mochi",
+        "toast": "VRChat 搜索 Yuzu_mochi，记得敲门哦。"
+      },
+      {
+        "label": "Pixiv",
+        "value": "@fuwari_yuzu",
+        "toast": "Pixiv 同名：ふわり柚子。"
+      },
+      {
+        "label": "Email",
+        "value": "hi@fuwari.moe",
+        "toast": "写信给我：hi@fuwari.moe"
       }
     ]
   },
   "owner": {
-    "name": "太阳",
-    "latin": "sun",
-    "roles": "是姐姐的爱人",
-    "avatar": "uploads/1792474706109-cfd722f7.webp",
-    "alt": "跟姐姐",
-    "handle": "@sun",
-    "vrcId": "暂不展示",
+    "name": "柚子",
+    "latin": "Yuzu",
+    "roles": "插画师 / 世界建造者",
+    "avatar": "assets/img/avatar-yuzu.svg",
+    "alt": "柚子：淡紫色长发、贝雷帽的二次元头像",
+    "handle": "@yuzu_mochi",
+    "vrcId": "Yuzu_mochi",
     "status": "在线",
-    "statusAway": true,
+    "statusAway": false,
     "bio": "「在搭一个有很多窗户的小世界。欢迎来坐，但进门记得脱鞋。」",
     "info": [
       {
+        "label": "常用模型",
+        "value": "柚子猫耳 ver.2"
+      },
+      {
         "label": "身高",
-        "value": "170cm"
+        "value": "1.52 m"
       },
       {
         "label": "喜欢的世界",
@@ -71,14 +85,14 @@
     ],
     "vrcCover": "ふわり星海 · 私人小屋",
     "vrcStatus": "在线 · 私密世界",
-    "vrcStatusAway": true,
-    "mutual": "爱人",
-    "signature": "sun",
+    "vrcStatusAway": false,
+    "mutual": "与星澈 · 同居中",
+    "signature": "Yuzu",
     "signNote": "慢一点，也是在往前。",
     "aboutTitle": "你好，我是",
     "aboutParagraphs": [
-      "一个把生活调成 0.8 倍速。喜欢奶油色、旧书页、便利店关东煮，以及一切圆滚滚的东西。",
-      "白天爱你，晚上钻进 VRChat 搭小世界。2022 年春天遇见星澈，从此每个普通星期三都变得值得记录。这里是我的手帐，也是我们的小小存档点。"
+      "一个把生活调成 0.8 倍速的插画师。喜欢奶油色、旧书页、便利店关东煮，以及一切圆滚滚的东西。",
+      "白天画稿，晚上钻进 VRChat 搭小世界。2022 年春天遇见星澈，从此每个普通星期三都变得值得记录。这里是我的手帐，也是我们的小小存档点。"
     ],
     "aboutTags": [
       "插画",
@@ -105,20 +119,24 @@
     "readNote": "在窗边，慢慢写。"
   },
   "partner": {
-    "name": "窝窝头",
-    "latin": "wowotou",
-    "roles": "是宝宝的爱人",
-    "avatar": "uploads/1792474712668-82e8f5a2.webp",
-    "alt": "银蓝色头发、薄荷卫衣的二次元头像",
-    "handle": "@窝窝头",
-    "vrcId": "暂不展示",
+    "name": "星澈",
+    "latin": "Sei",
+    "roles": "程序员 / 深夜露营者",
+    "avatar": "assets/img/avatar-sei.svg",
+    "alt": "星澈：银蓝色头发、薄荷卫衣的二次元头像",
+    "handle": "@sei_star",
+    "vrcId": "Sei_starfall",
     "status": "挂机中",
     "statusAway": true,
-    "bio": "「负责在深夜说『再玩五分钟』VRChat 里搭帐篷。」",
+    "bio": "「负责在深夜说『再玩五分钟』。现实里写代码，VRChat 里搭帐篷。」",
     "info": [
       {
+        "label": "常用模型",
+        "value": "星澈 · 夜航 ver."
+      },
+      {
         "label": "身高",
-        "value": "170cm"
+        "value": "1.78 m"
       },
       {
         "label": "喜欢的世界",
@@ -139,13 +157,13 @@
     "vrcCover": "星海营地 · 深夜场",
     "vrcStatus": "挂机中 · 星海营地",
     "vrcStatusAway": true,
-    "mutual": "爱人",
+    "mutual": "与柚子 · 同居中",
     "readNote": ""
   },
   "couple": {
-    "since": "2026-08-23T20:00:00+08:00",
-    "sinceLabel": "2026.08.23",
-    "anniversary": "08-23",
+    "since": "2022-05-20T20:00:00+08:00",
+    "sinceLabel": "2022.05.20",
+    "anniversary": "05-20",
     "titleTop": "砂糖",
     "titleBottom": "情侣",
     "eyebrow": "SUGAR COUPLE · VRChat SWEETHEARTS",
@@ -163,7 +181,7 @@
       "tag": "日常",
       "date": "2026-10-12",
       "read": "6 分钟",
-      "image": "uploads/1792473647644-fb07b81c.webp",
+      "image": "assets/img/scene-cafe.svg",
       "alt": "雨天咖啡馆里的两杯桂花拿铁",
       "excerpt": "下雨的下午，我们躲进街角咖啡馆。你把奶泡推到我面前，说这一杯有桂花的味道，也有点像去年秋天。",
       "body": [
@@ -207,7 +225,7 @@
       "tag": "VRChat",
       "date": "2026-09-28",
       "read": "5 分钟",
-      "image": "uploads/1792474075429-ebb31592.webp",
+      "image": "assets/img/scene-camp.svg",
       "alt": "星海露营的发光帐篷和篝火",
       "excerpt": "帐篷是薄荷绿的，篝火噼啪响。你说下线之前，再看一次流星吧。",
       "body": [
@@ -251,7 +269,7 @@
       "tag": "家居",
       "date": "2026-09-06",
       "read": "4 分钟",
-      "image": "uploads/1792474091774-22264bff.webp",
+      "image": "assets/img/scene-room.svg",
       "alt": "雨天房间里亮着暖灯的书桌",
       "excerpt": "把台灯调暗一点，让雨声先进来。房间和我，都在慢慢变软。",
       "body": [
@@ -291,7 +309,7 @@
       "tag": "随想",
       "date": "2026-08-21",
       "read": "3 分钟",
-      "image": "uploads/1792474118117-28894abd.webp",
+      "image": "assets/img/scene-letter.svg",
       "alt": "夏日窗边写信的桌面",
       "excerpt": "等蝉声停下来，再把这封信寄出去。",
       "body": [
@@ -369,91 +387,173 @@
   ],
   "gallery": [
     {
-      "id": "pic-mv-887907",
-      "image": "uploads/1792473647644-fb07b81c.webp",
-      "alt": "爱心",
-      "title": "第一次遇见，的mv",
-      "date": "想靠近你",
-      "caption": "",
+      "id": "g-sakura",
+      "image": "assets/img/scene-sakura.svg",
+      "alt": "樱花坡道和鸟居下牵手的两道背影",
+      "title": "四月 · 樱花坡道",
+      "date": "04 / 08",
+      "caption": "樱花坡道上，谁也没有先松开手。",
+      "size": "wide"
+    },
+    {
+      "id": "g-fireworks",
+      "image": "assets/img/scene-fireworks.svg",
+      "alt": "夏夜花火下并肩的两道背影",
+      "title": "八月 · 花火大会",
+      "date": "08 / 16",
+      "caption": "花火升起来的时候，你正好在看我。",
       "size": "normal"
     },
     {
-      "id": "pic-6d118b",
-      "image": "uploads/1792473697146-5a7f30f8.webp",
-      "alt": "爱你",
-      "title": "与你的第一个拍的照片",
-      "date": "有点急切",
-      "caption": "",
+      "id": "g-cafe",
+      "image": "assets/img/scene-cafe.svg",
+      "alt": "雨天窗边的咖啡桌",
+      "title": "九月 · 雨天咖啡馆",
+      "date": "09 / 12",
+      "caption": "雨天的咖啡馆，两杯拿铁慢慢变凉。",
       "size": "normal"
     },
     {
-      "id": "pic-c8dba7",
-      "image": "uploads/1792473797289-dd40a2f0.webp",
-      "alt": "爱你",
-      "title": "贴贴宝宝",
-      "date": "",
-      "caption": "",
+      "id": "g-camp",
+      "image": "assets/img/scene-camp.svg",
+      "alt": "星海下的发光帐篷",
+      "title": "九月 · 星海露营",
+      "date": "09 / 28",
+      "caption": "星海营地，篝火和你都在发光。",
+      "size": "tall"
+    },
+    {
+      "id": "g-snow",
+      "image": "assets/img/scene-snow.svg",
+      "alt": "初雪街道上共围一条围巾的两人",
+      "title": "十二月 · 初雪",
+      "date": "12 / 24",
+      "caption": "初雪那天，一条围巾分给两个人。",
       "size": "normal"
     },
     {
-      "id": "pic-ffe6bb",
-      "image": "uploads/1792473832299-9355d775.webp",
-      "alt": "爱你",
-      "title": "上面是对你的心动值",
-      "date": "100偶",
-      "caption": "",
+      "id": "g-birthday",
+      "image": "assets/img/scene-birthday.svg",
+      "alt": "生日蛋糕和两个人的房间",
+      "title": "五月 · 生日房间",
+      "date": "05 / 20",
+      "caption": "蜡烛吹灭之前，偷偷许了一个关于你的愿望。",
       "size": "normal"
+    },
+    {
+      "id": "g-room",
+      "image": "assets/img/scene-room.svg",
+      "alt": "雨天温暖的书桌",
+      "title": "九月 · 房间一角",
+      "date": "09 / 06",
+      "caption": "雨声、台灯、写到一半的手帐。",
+      "size": "normal"
+    },
+    {
+      "id": "g-letter",
+      "image": "assets/img/scene-letter.svg",
+      "alt": "夏日窗边写信的桌子",
+      "title": "八月 · 夏日慢信",
+      "date": "08 / 21",
+      "caption": "给夏天写信，结尾总是「下次见」。",
+      "size": "wide"
     }
   ],
   "wall": [
     {
-      "id": "wall-e8bf3b",
-      "image": "uploads/1792474162772-6e436a4c.webp",
-      "alt": "",
-      "title": "",
-      "caption": ""
+      "id": "w-sakura",
+      "image": "assets/img/scene-sakura.svg",
+      "alt": "樱花坡道与鸟居下牵手的两人",
+      "title": "第一次见面",
+      "caption": "2022.05.20 · 樱花坡道"
     },
     {
-      "id": "wall-3705fa",
-      "image": "uploads/1792474173769-b6e51049.webp",
-      "alt": "",
-      "title": "",
-      "caption": ""
+      "id": "w-fireworks",
+      "image": "assets/img/scene-fireworks.svg",
+      "alt": "夏夜花火下并肩的两人",
+      "title": "花火大会",
+      "caption": "2022.08.16 · 第二排，偷偷牵手"
     },
     {
-      "id": "wall-afb13e",
-      "image": "uploads/1792474184287-82f88b6c.webp",
-      "alt": "",
-      "title": "",
-      "caption": ""
+      "id": "w-cafe",
+      "image": "assets/img/scene-cafe.svg",
+      "alt": "雨天咖啡馆的桌边",
+      "title": "雨天咖啡馆",
+      "caption": "2023.09.12 · 一杯不加糖"
     },
     {
-      "id": "wall-9f7ede",
-      "image": "uploads/1792474197835-132cae95.webp",
-      "alt": "",
-      "title": "",
-      "caption": ""
+      "id": "w-camp",
+      "image": "assets/img/scene-camp.svg",
+      "alt": "星海下的发光帐篷",
+      "title": "星海露营",
+      "caption": "2025.09.28 · 帐篷里漏进一颗星"
+    },
+    {
+      "id": "w-snow",
+      "image": "assets/img/scene-snow.svg",
+      "alt": "初雪里共围一条围巾的两人",
+      "title": "初雪",
+      "caption": "2022.12.24 · 一条围巾，两个人"
+    },
+    {
+      "id": "w-birthday",
+      "image": "assets/img/scene-birthday.svg",
+      "alt": "生日蛋糕前一起吹蜡烛",
+      "title": "生日房间",
+      "caption": "2026.05.20 · 蜡烛是 5 和 2"
+    },
+    {
+      "id": "w-room",
+      "image": "assets/img/scene-room.svg",
+      "alt": "雨天里各做各事的房间",
+      "title": "周末的房间",
+      "caption": "2026.09.06 · 各做各的事"
+    },
+    {
+      "id": "w-letter",
+      "image": "assets/img/scene-letter.svg",
+      "alt": "夏日窗边写信的桌子",
+      "title": "夏日慢信",
+      "caption": "2026.08.21 · 写给你的第 37 封"
     }
   ],
   "timeline": [
     {
-      "id": "t-5",
-      "date": "2026.08.23",
-      "title": "我们的第一次相见",
-      "text": "第一次遇到你觉得你好可爱"
+      "id": "t-1",
+      "date": "2022.05.20",
+      "title": "樱花世界的第一次相遇",
+      "text": "你在鸟居下「迷路」，我假装也迷路。其实那天我绕了三圈。"
     },
     {
-      "id": "t-2026-09-1-1c1ffe",
-      "date": "2026.09.1",
-      "title": "我喜欢上你了",
-      "text": "我喜欢你的温柔，喜欢你的声音，喜欢和你呆的每一刻"
+      "id": "t-2",
+      "date": "2022.08.16",
+      "title": "第一次一起看花火",
+      "text": "你说花火很吵，但一整晚都没有松开手。"
+    },
+    {
+      "id": "t-3",
+      "date": "2022.12.24",
+      "title": "初雪，与同一条围巾",
+      "text": "现实里第一次见面，比模型还紧张。你把围巾分我一半。"
+    },
+    {
+      "id": "t-4",
+      "date": "2024.08.02",
+      "title": "搬进有小窗户的家",
+      "text": "一只猫、六盆绿植、两副碗筷，和永远抢不到的靠窗位。"
+    },
+    {
+      "id": "t-5",
+      "date": "2026.05.20",
+      "title": "第五年，把「以后」又说了一遍",
+      "text": "蛋糕上的蜡烛是 5 和 2。愿望和第一年一样。"
     }
   ],
   "notes": [
     {
       "id": "seed-1",
       "name": "小满",
-      "text": "在星海营地迷路的时候，是你把我捡回去的。谢谢那，还有陪我走到传送门。",
+      "text": "在星海营地迷路的时候，是你们两个把我捡回去的。谢谢那杯热可可，还有陪我走到传送门。",
       "color": "mint",
       "date": "2026.09.30",
       "likes": 12
@@ -465,6 +565,14 @@
       "color": "lav",
       "date": "2026.10.02",
       "likes": 9
+    },
+    {
+      "id": "seed-3",
+      "name": "桃桃",
+      "text": "5·20 快乐！今年也要一起吃草莓蛋糕。顺便问一句，合照墙第三张的咖啡馆在哪里，好想去。",
+      "color": "pink",
+      "date": "2026.10.05",
+      "likes": 21
     },
     {
       "id": "seed-4",
