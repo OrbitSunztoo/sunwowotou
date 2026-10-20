@@ -45,6 +45,7 @@ npm start
 | `SITE_URL` | 空 | 填了会出现在后台的站点信息里（如 `https://blog.example.com`） |
 | `FUWARI_MAX_UPLOAD_MB` | `8` | 单张图片上传上限 |
 | `FUWARI_DATA_DIR` | `./data` | 数据目录，想丢到别处就改这里 |
+| `FUWARI_ADMIN_ORIGINS` | 空 | 允许远程登录后台的前台域名，逗号分隔（见下文「前台在 GitHub Pages、后台在自己的服务器」） |
 
 ---
 
@@ -74,6 +75,32 @@ npm start
 
 图片上传：在任意图片字段旁点「上传」，文件存到 `uploads/`，正文里引用即可。
 
+### 前台托管在 GitHub Pages、后台在自己的服务器
+
+这种组合最常见：博客页面白嫖 GitHub Pages，数据和后台放在自己的小服务器上。
+
+1. **服务器**上按 [DEPLOY.md](DEPLOY.md) 部好，并允许 Pages 域名跨域登录：
+
+   ```bash
+   FUWARI_ADMIN_ORIGINS=https://你的用户名.github.io
+   ```
+
+   （systemd 里写在 `Environment=` 一行即可；有多个域名用逗号分隔。）
+
+2. **本地**跑一次下面这条命令，把后端地址写进 `assets/js/api-config.js`：
+
+   ```bash
+   node tools/set-api-base.js https://你的服务器域名
+   ```
+
+   然后 `git add assets/js/api-config.js && git commit && git push`，等 Pages 重新部署。
+   之后 Pages 上的首页、砂糖情侣页都会**直接读服务器上的实时数据**，不再走只读的 `content.json`。
+
+3. **进后台**用 `https://你的用户名.github.io/仓库名/public/admin.html`（发布时整个仓库都会上 Pages，后台在 `public/` 里）。
+   也可以临时在地址后面加 `?api=https://你的服务器域名`，不用改文件也能连。
+
+> 不想折腾服务器也行：不配 `api-config.js` 时 Pages 会进入**只读模式**，数据来自仓库里的 `content.json`，留言只能存本机浏览器。想更新文章就本地 `npm start` 改完，用 <http://127.0.0.1:8787/api/backup> 下载最新的 `content.json`，连同 `uploads/` 里的图片一起推上去。
+
 ---
 
 ## 三、目录结构
@@ -87,6 +114,7 @@ npm start
 │   │         couple.css    砂糖情侣页样式
 │   │         responsive.css 响应式断点
 │   ├── js/   content.js    读取后台数据并渲染各区块
+│   │         api-config.js  后端地址（`node tools/set-api-base.js` 生成）
 │   │         main.js       粒子、阅读弹窗、搜索、灯箱、滚动动画
 │   │         couple.js     倒计时、纪念日、留言区
 │   └── img/  *.svg         原创手绘插画（头像、场景、logo）
@@ -102,6 +130,8 @@ npm start
 │   ├── migrate-static.js   把旧静态站的图片绝对路径改成相对路径
 │   └── lib/                auth 鉴权 · http 响应与上传 · store JSON 存储 · defaults 默认内容
 ├── deploy.sh               一键部署脚本（Ubuntu / Debian）
+├── tools/
+│   └── set-api-base.js     写入 / 清空 api-config.js 里的后端地址
 ├── DEPLOY.md               部署与运维指南
 └── package.json
 ```
@@ -140,8 +170,8 @@ npm start
 sudo bash deploy.sh 你的域名
 ```
 
-如果只能放静态文件（GitHub Pages / 对象存储），把 `index.html`、`assets/`、`uploads/`、`content.json` 一起上传，并把 `index.html` 里的 `<!--FUWARI:CONFIG-->` 换成
-`<script>window.FUWARI_CONFIG = { apiBase: "", dataUrl: "./content.json" };</script>`，页面照常展示（留言提交/点赞会提示“静态托管无法保存”）。
+如果只能放静态文件（GitHub Pages / 对象存储），把 `index.html`、`assets/`、`uploads/`、`content.json` 一起上传就行——前台会自动检测没有 `/api/content` 并改读 `./content.json`，无需改配置。
+静态模式下留言和点赞存在本地 localStorage（只对本机可见），接口与服务端逻辑不变，换回 VPS 后自动恢复真实留言。
 
 ---
 

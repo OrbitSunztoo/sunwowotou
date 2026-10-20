@@ -156,9 +156,10 @@ function serveFile(req, res, file, { cache = "no-cache", download = false } = {}
   fs.createReadStream(file).pipe(res);
 }
 
-function setCookie(res, name, value, { maxAge = 0, httpOnly = true, sameSite = "Lax", path: cookiePath = "/" } = {}) {
+function setCookie(res, name, value, { maxAge = 0, httpOnly = true, sameSite = "Lax", path: cookiePath = "/", secure = false } = {}) {
   const parts = [`${name}=${encodeURIComponent(value)}`, `Path=${cookiePath}`, `SameSite=${sameSite}`];
   if (httpOnly) parts.push("HttpOnly");
+  if (secure) parts.push("Secure");
   if (maxAge > 0) parts.push(`Max-Age=${Math.floor(maxAge / 1000)}`);
   if (maxAge <= 0) parts.push("Max-Age=0");
   const existing = res.getHeader("Set-Cookie");

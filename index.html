@@ -14,11 +14,17 @@
   <link rel="stylesheet" href="assets/css/couple.css">
   <link rel="stylesheet" href="assets/css/responsive.css">
   <!--FUWARI:CONFIG-->
+  <script src="assets/js/api-config.js"></script>
   <script>
     /* 纯静态托管（GitHub Pages / 对象存储）时自动切换为只读模式：
        同源 /api/content 不存在就改读 ./content.json；staticFallback 用来把留言/点赞切到本地保存。 */
     (function () {
       var cfg = (window.FUWARI_CONFIG = window.FUWARI_CONFIG || {});
+      // api-config.js 里配了后端地址就连后端，否则同源 /api，再不行退回 content.json
+      if (!("apiBase" in cfg) || !cfg.apiBase) {
+        var api = String(window.FUWARI_API || "").replace(/\/+$/, "");
+        if (api) cfg.apiBase = api;
+      }
       if (!("apiBase" in cfg)) cfg.apiBase = "";
       if (location.protocol === "file:") {
         cfg.dataUrl = cfg.dataUrl || "data/content.json";

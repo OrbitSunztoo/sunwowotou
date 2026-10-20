@@ -25,6 +25,58 @@ const HOST = process.env.HOST || "127.0.0.1";
 const PORT = Number(process.env.PORT || process.env.FUWARI_PORT || 8787);
 const MAX_UPLOAD = Number(process.env.FUWARI_MAX_UPLOAD_MB || 8) * 1024 * 1024;
 
+/* 允许跨域访问管理后台的站点，逗号分隔，例如
+   静态托管页（GitHub Pages）上的 admin.html 连到这里来用
+   FUWARI_ADMIN_ORIGINS=https://你的用户名.github.io */
+const ADMIN_ORIGINS = String(process.env.FUWARI_ADMIN_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+/** 请求来源：同源返回 ""，在允许名单里返回该 origin，否则返回 null（拒绝） */
+function adminOrigin(req) {
+  const origin = String(req.headers.origin || "").replace(/\/+$/, "");
+  if (!origin) return "";
+  let self = "";
+  try {
+    self = `${(String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim() || "http")}://${req.headers.host}`;
+  } catch (error) {
+    self = "";
+  }
+  if (origin === self) return "";
+  // "null" 来自直接双击打开的本地 HTML（file://），只允许连本机后端：此时同站 Cookie 会被浏览器拦掉，
+  // 后台自己会退回到「免 Cookie 的模式」，所以不存在被陌生网页盗用凭据的风险。
+  if (origin === "null") return isLocalHost(req) ? "null" : null;
+  if (ADMIN_ORIGINS.includes(origin)) return origin;
+  return null;
+}
+
+/** 请求是否打在本机回环地址上（127.0.0.1 / localhost / ::1） */
+function isLocalHost(req) {
+  const host = String(req.headers.host || "").toLowerCase();
+  return host.startsWith("127.0.0.1") || host.startsWith("localhost") || host.startsWith("[::1]");
+}
+
+/** 给一个 HTTP 响应挂上跨域 + Cookie 需要的头 */
+function corsHeaders(req, origin) {
+  if (!origin) return {};
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,X-Fuwari-Auth",
+    "Access-Control-Max-Age": "600",
+    Vary: "Origin"
+  };
+}
+
+/** 认证类 Cookie：跨站访问时要 SameSite=None; Secure 才会被浏览器带上 */
+function authCookie(req, origin) {
+  const crossSite = Boolean(origin);
+  const https = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim() === "https";
+  return { sameSite: crossSite ? "None" : "Lax", secure: crossSite && https };
+}
+
 const store = createStore(DATA_DIR);
 const auth = createAuth(DATA_DIR);
 
@@ -109,9 +161,16 @@ function clientIP(req) {
   return String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
 }
 
+/** 读当前请求携带的登录凭据：优先 httpOnly Cookie，其次 x-fuwari-auth 头（file:// 后台用） */
+function authToken(req) {
+  const fromCookie = H.parseCookies(req.headers.cookie)[COOKIE];
+  if (fromCookie) return fromCookie;
+  const fromHeader = String(req.headers["x-fuwari-auth"] || "").trim();
+  return fromHeader || "";
+}
+
 function isLoggedIn(req) {
-  const token = H.parseCookies(req.headers.cookie)[COOKIE];
-  return auth.verifyToken(token);
+  return auth.verifyToken(authToken(req));
 }
 
 function requireAuth(req, res) {
@@ -143,9 +202,26 @@ async function handleApi(req, res, url) {
   const route = url.pathname.replace(/^\/api/, "") || "/";
   const method = req.method;
 
-  // 只读接口允许跨域（直接打开本地 HTML 时用）
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Credentials", "false");
+  // 跨域策略只在这里设一次：
+  //  · 无名（curl/同源）→ 只读接口给 *，方便本地直接打开 HTML
+  //  · 白名单来源 → 回显该 origin 并允许带 Cookie（管理后台用）
+  const origin = adminOrigin(req);
+  if (origin === null) {
+    H.sendJSON(res, 403, { error: "这个来源不允许访问管理后台，请把它加进 FUWARI_ADMIN_ORIGINS" });
+    return;
+  }
+  const cors = corsHeaders(req, origin);
+  if (method === "OPTIONS") {
+    res.writeHead(204, { Allow: "GET,POST,PUT,OPTIONS", ...cors });
+    res.end();
+    return;
+  }
+  if (origin) {
+    for (const [key, value] of Object.entries(cors)) res.setHeader(key, value);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "false");
+  }
 
   /* --- 前台 --- */
   if (route === "/content" && method === "GET") {
@@ -215,13 +291,15 @@ async function handleApi(req, res, url) {
       return;
     }
     auth.resetFails();
-    H.setCookie(res, COOKIE, auth.makeToken(), { maxAge: auth.SESSION_MS });
-    H.sendJSON(res, 200, { ok: true, username: auth.username() });
+    const token = auth.makeToken();
+    H.setCookie(res, COOKIE, token, { maxAge: auth.SESSION_MS, ...authCookie(req, origin) });
+    // token 同时回给前端：浏览器存不住跨站 Cookie 时（file:// 或第三方 Cookie 被拦），改用请求头续命
+    H.sendJSON(res, 200, { ok: true, username: auth.username(), token });
     return;
   }
 
   if (route === "/logout" && method === "POST") {
-    H.setCookie(res, COOKIE, "", { maxAge: 0 });
+    H.setCookie(res, COOKIE, "", { maxAge: 0, ...authCookie(req, origin) });
     H.sendJSON(res, 200, { ok: true });
     return;
   }
@@ -330,8 +408,9 @@ async function handleApi(req, res, url) {
       return;
     }
     await auth.setPassword(String(body.username || auth.username()).trim(), next);
-    H.setCookie(res, COOKIE, auth.makeToken(), { maxAge: auth.SESSION_MS });
-    H.sendJSON(res, 200, { ok: true });
+    const token = auth.makeToken();
+    H.setCookie(res, COOKIE, token, { maxAge: auth.SESSION_MS, ...authCookie(req, origin) });
+    H.sendJSON(res, 200, { ok: true, token });
     return;
   }
 
@@ -462,8 +541,7 @@ const server = http.createServer(async (req, res) => {
   res.setHeader("Referrer-Policy", "same-origin");
 
   if (req.method === "OPTIONS" && url.pathname.startsWith("/api")) {
-    res.writeHead(204, { Allow: "GET,POST,PUT,OPTIONS" });
-    res.end();
+    await handleApi(req, res, url);
     return;
   }
 

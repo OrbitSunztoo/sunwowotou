@@ -10,8 +10,8 @@
      · 从 GitHub Pages 这类纯静态托管打开时，没有后端，
        用 ?api=https://你的域名 指定后端；也可以是相对路径 ../其它目录 */
   const params = new URLSearchParams(location.search);
-  const API_PARAM = (params.get("api") || "").replace(/\/+$/, "");
-  const API = API_PARAM ? API_PARAM + "/api" : "/api";
+  let API_PARAM = (params.get("api") || "").replace(/\/+$/, "");
+  let API = API_PARAM ? API_PARAM + "/api" : "/api";
 
   const $ = (sel, scope = document) => scope.querySelector(sel);
   const $$ = (sel, scope = document) => Array.from(scope.querySelectorAll(sel));
@@ -56,12 +56,60 @@
 
   /* ---------------- 请求 ---------------- */
 
-  async function api(path, options = {}) {
-    const res = await fetch(API + path, {
-      credentials: "same-origin",
-      headers: options.body && !(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {},
-      ...options
+  // 跨域连服务器时必须带 Cookie，否则登录状态存不住
+  const CREDENTIALS = API_PARAM ? "include" : "same-origin";
+
+  /** 读取发布时生成的 api-config.js（形如 window.FUWARI_API = "https://xxx"） */
+  function loadBackendConfig() {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      // 站内打开时 admin.html 挂在 /admin.html，线上 Pages 时挂在 /public/admin.html，两种层级都试
+      script.src = /\/public\//.test(location.pathname) ? "../assets/js/api-config.js" : "assets/js/api-config.js";
+      script.onload = () => {
+        const base = String((window.FUWARI_API || (window.FUWARI_CONFIG || {}).apiBase || "")).replace(/\/+$/, "");
+        if (base) {
+          API_PARAM = base;
+          API = base + "/api";
+        }
+        resolve();
+      };
+      script.onerror = () => resolve();
+      document.head.append(script);
+      setTimeout(resolve, 2500);
     });
+  }
+
+  /** 后台顶部放一个「回到前台」的小链接 */
+  function showSiteLink() {
+    const link = $("#siteLink");
+    if (!link || API_PARAM) return;
+    link.href = /\/public\//.test(location.pathname) ? "../index.html" : "/";
+    link.hidden = false;
+  }
+
+  // 浏览器存不住跨站 Cookie（file:// 或第三方 Cookie 被拦）时，用登录时拿到的 token 换成请求头
+  const TOKEN_KEY = "fuwari-admin-token";
+  const readToken = () => {
+    try {
+      return localStorage.getItem(TOKEN_KEY) || "";
+    } catch (error) {
+      return "";
+    }
+  };
+  const writeToken = (value) => {
+    try {
+      if (value) localStorage.setItem(TOKEN_KEY, value);
+      else localStorage.removeItem(TOKEN_KEY);
+    } catch (error) {
+      /* 隐私模式下写不进去就算了 */
+    }
+  };
+
+  async function api(path, options = {}) {
+    const headers = { ...(options.body && !(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}) };
+    const token = readToken();
+    if (token) headers["X-Fuwari-Auth"] = token;
+    const res = await fetch(API + path, { credentials: CREDENTIALS, ...options, headers });
     let data = null;
     try {
       data = await res.json();
@@ -69,6 +117,7 @@
       data = null;
     }
     if (res.status === 401) {
+      writeToken("");
       showLogin();
       throw new Error("登录已过期，请重新登录");
     }
@@ -160,17 +209,25 @@
 
   async function boot() {
     // 纯静态托管（GitHub Pages、gitee pages 等）没有 /api，先探一下
-    const sameOrigin = !API_PARAM;
-    if (sameOrigin) {
-      const reachable = await Promise.race([
-        fetch(`/api/session?probe=${Date.now()}`, { credentials: "same-origin" })
-          .then((res) => res.ok || res.status >= 400)
-          .catch(() => false),
-        new Promise((resolve) => setTimeout(() => resolve(false), 4000))
-      ]);
-      if (!reachable) {
-        showStaticNotice();
-        return;
+    if (!API_PARAM) {
+      // 线上是静态托管时，真正的后端地址通常由发布时写入的脚本文件提供
+      await loadBackendConfig();
+      showSiteLink();
+      if (!API_PARAM) {
+        const reachable = await Promise.race([
+          fetch(`/api/session?probe=${Date.now()}`, { credentials: CREDENTIALS, cache: "no-store" })
+            .then((res) => {
+              // 真正的 /api 一定会回 JSON；静态托管对未知路径多半回 200 + HTML，不能当成可达
+              const type = String(res.headers.get("content-type") || "");
+              return res.status !== 404 && /json/i.test(type);
+            })
+            .catch(() => false),
+          new Promise((resolve) => setTimeout(() => resolve(false), 4000))
+        ]);
+        if (!reachable) {
+          showStaticNotice();
+          return;
+        }
       }
     }
     try {
@@ -227,13 +284,15 @@
     button.disabled = true;
     button.textContent = "正在进入…";
     try {
-      await api("/login", {
+      const result = await api("/login", {
         method: "POST",
         body: JSON.stringify({
           username: form.elements.username.value.trim(),
           password: form.elements.password.value
         })
       });
+      // Cookie 存不下时会话就靠这个 token 续命（服务端只在白名单来源下发放）
+      if (result && result.token) writeToken(result.token);
       await loadContent();
       showApp();
       toast("欢迎回来 ✿", "ok");
@@ -247,7 +306,12 @@
 
   $("#logoutBtn").addEventListener("click", async () => {
     if (dirty && !confirm("还有没保存的修改，确定要退出吗？")) return;
-    await api("/logout", { method: "POST" });
+    try {
+      await api("/logout", { method: "POST" });
+    } catch (error) {
+      /* 已经退出过也无所谓 */
+    }
+    writeToken("");
     location.reload();
   });
 
