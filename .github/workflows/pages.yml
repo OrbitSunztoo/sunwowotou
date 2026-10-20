@@ -1,0 +1,54 @@
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build static site
+        run: |
+          rm -rf site
+          mkdir -p site
+          cp -r index.html assets content.json site/
+          if [ -f couple.html ]; then cp couple.html site/; fi
+          if [ -d uploads ]; then cp -r uploads site/; fi
+          python3 - <<'PY'
+          p = "site/index.html"
+          html = open(p, encoding="utf-8").read()
+          for old in ('href="couple.html#couple"', 'href="./couple.html#couple"', 'href="couple.html"'):
+              html = html.replace(old, 'href="#couple"')
+          open(p, "w", encoding="utf-8").write(html)
+          PY
+          echo "files: $(find site -type f | wc -l)"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
