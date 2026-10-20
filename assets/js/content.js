@@ -520,11 +520,13 @@
   }
 
   function withLocalNotes(content) {
-    if (!STATIC() || !content) return content;
-    // 本机改过的整份内容（后台「只看本机」模式）优先，再用本地留言补上
+    // 有后端时以后端为准；只有确实存着本机内容（静态托管 / 本机临时编辑）才加上去
+    if (!content) return content;
     const cached = readLocalContent();
-    const base = cached || content;
     const local = readLocalNotes();
+    if (!STATIC() && !cached && !local.length) return content;
+    // 本机改过的整份内容（后台「只看本机」模式）优先，再用本地留言补上
+    const base = cached || content;
     if (!local.length) return base;
     return { ...base, notes: local.concat(base.notes || []) };
   }

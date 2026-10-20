@@ -10,18 +10,18 @@
 </head>
 <body>
 
-  <!-- 纯静态托管（如 GitHub Pages）没有后端时的提示 -->
+  <!-- 纯静态托管（没有后端服务）时的提示 -->
   <div class="login hidden" id="staticNotice">
     <div class="login-card" id="staticCard">
       <div class="brand-mark">✿</div>
       <h1>这个地址没有后台服务</h1>
       <p class="sub" id="staticHint">
-        GitHub Pages 只能放静态网页，管理后台需要连接你自己的服务器。<br>
+        管理后台需要连接后端服务。<br>
         把服务器地址带上再打开，例如：
       </p>
       <p class="url-example" id="staticUrl"></p>
       <p class="hint">
-        服务器上按 DEPLOY.md 部署好后，地址就是 <code>https://你的域名/admin.html</code>，
+        后端跑起来以后，地址就是 <code>http://你的服务器:8787/admin.html</code>，
         直接打开就能登录改内容。
       </p>
       <p class="hint"><a href="../">← 回到博客首页</a></p>
@@ -88,53 +88,7 @@
         <span class="save-state" id="saveState">已保存</span>
         <button class="btn btn-ghost btn-sm" type="button" id="reloadBtn">重新读取</button>
         <button class="btn btn-primary btn-sm" type="button" id="saveBtn">保存修改</button>
-        <button class="btn btn-cloud btn-sm" type="button" id="syncBtn" hidden>☁ 上传到 GitHub</button>
       </div>
-
-      <div class="sync-box hidden" id="syncBox">
-        <div class="sync-head">
-          <strong id="syncTitle">正在上传…</strong>
-          <span class="sync-sub" id="syncSub"></span>
-          <span class="spacer"></span>
-          <button class="icon-btn" type="button" id="syncClose" aria-label="收起">✕</button>
-        </div>
-        <pre class="sync-log" id="syncLog"></pre>
-      </div>
-
-      <!-- 第一次上传前：填仓库 + 令牌（只存在这台电脑上，不会进仓库） -->
-      <form class="sync-box setup-box hidden" id="syncSetup">
-        <div class="sync-head">
-          <strong>✿ 先把上传的设置填一次</strong>
-          <span class="sync-sub">填好之后每次点一下就会自动上传，不用再管了</span>
-          <span class="spacer"></span>
-          <button class="icon-btn" type="button" id="syncSetupClose" aria-label="收起">✕</button>
-        </div>
-        <div class="setup-body">
-          <label class="field">
-            <span>① 你的 GitHub 仓库</span>
-            <input class="input" id="syncRepo" placeholder="owner/仓库名，例如 OrbitSunztoo/sunwowotou" autocomplete="off">
-          </label>
-          <label class="field">
-            <span>② 一个 GitHub 令牌（只填一次）</span>
-            <input class="input" id="syncToken" type="password" placeholder="github_pat_... 或 ghp_..." autocomplete="off">
-          </label>
-          <ol class="steps">
-            <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>（Fine-grained token）。</li>
-            <li><b>Token name</b> 随便写，比如 <code>fuwari-blog</code>；<b>Expiration</b> 选 90 天或更长。</li>
-            <li><b>Repository access</b> 选 <b>Only select repositories</b> → 勾上这个博客的仓库。</li>
-            <li>往下拉 <b>Permissions</b> → <b>Repository permissions</b>，把 <b>Contents</b> 改成 <b>Read and write</b>，其余不用动。</li>
-            <li>点最下面 <b>Generate token</b>，把那串字符（<code>github_pat_</code> 开头）复制回来粘到上面。</li>
-          </ol>
-          <p class="hint">
-            令牌只保存在这台电脑的 <code>data/github-token.txt</code>，不会写进网页，也不会被上传。
-            想换仓库或换令牌，点上面的「☁」按钮旁的小齿轮，或者删掉 <code>upload.config.json</code> 再试一次。
-          </p>
-        </div>
-        <div class="sync-foot">
-          <button class="btn btn-primary btn-sm" type="submit" id="syncSetupSave">保存并上传</button>
-          <button class="btn btn-ghost btn-sm" type="button" id="syncSetupInputCancel">取消</button>
-        </div>
-      </form>
 
       <!-- 人物资料 -->
       <section class="tab-panel" data-panel="people">
@@ -436,26 +390,6 @@
           </div>
           <button class="btn btn-primary" type="button" id="accSave">更新账号</button>
           <button class="btn btn-ghost" type="button" id="logoutBtn">退出登录</button>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head"><h3>上传到 GitHub</h3><span class="spacer"></span><span class="hint" id="accSyncState">—</span></div>
-          <p class="hint">
-            改完内容点右上角的「☁ 上传到 GitHub」，10 秒左右就推上去了，Pages 网站大约 30～90 秒后更新。
-            想换仓库、换令牌、或者把网页代码也重新传一次，就在下面弄。
-          </p>
-          <div class="row" style="margin-top:12px">
-            <label class="field"><span>仓库（用户名/仓库名）</span><input class="input" id="accRepo" placeholder="OrbitSunztoo/sunwowotou" autocomplete="off"></label>
-            <label class="field"><span>分支</span><input class="input" id="accBranch" placeholder="main" autocomplete="off"></label>
-          </div>
-          <label class="field" style="margin-top:10px">
-            <span>GitHub 令牌（只换令牌时才填，留着不改就是继续用原来的）</span>
-            <input class="input" type="password" id="accToken" placeholder="github_pat_..." autocomplete="off">
-          </label>
-          <div class="row" style="margin-top:12px">
-            <button class="btn btn-primary" type="button" id="accSyncSave">保存设置</button>
-            <button class="btn btn-cloud" type="button" id="accSyncFull">☁ 连网页代码一起重传</button>
-          </div>
         </div>
 
         <div class="panel">
