@@ -598,9 +598,15 @@ async function main() {
   // --with-site（后台按钮默认加上）：连网页代码一起同步，内容和网页代码永远对得上。
   const withSite = args.flags.has("with-site") || args.flags.has("site");
   const siteNeeded = withSite || (!remoteBlobs.has("index.html") && !args.flags.has("data-only"));
-  const push = async (rel, buf, mode = "100644", write = false) => {
+
+  // 先把网页代码收齐，好判断内容文件到底有没有变化：
+  // 前端页面是从 content.json 里渲染的，只要前端代码升级了、内容没变，也要重写一次内容文件，
+  // 免得管理后台一直显示「有还没上传的修改」
+  const siteFiles = siteNeeded ? await collectSite() : [];
+
+  const push = async (rel, buf, mode = "100644", force = false) => {
     if (superseded.has(rel)) return;
-    if (buf.length < 900 * 1024 && !write) {
+    if (buf.length < 900 * 1024 && !force) {
       const local = gitBlobSha(buf);
       const remote = remoteBlobs.get(rel);
       if (remote && remote.sha === local) {
@@ -626,14 +632,22 @@ async function main() {
   };
 
   for (const file of done) await push(file.rel, file.data);
-  // 内容文件永远重写一次（内容没变的话 sha 一样，GitHub 那边不会多出一次提交）
-  await push(config.dataPath, dataBuf, "100644", true);
 
+  // 网页代码：先推，好知道前端有没有升级
+  let siteChanged = 0;
   if (siteNeeded) {
-    const files = await collectSite();
-    log(c.dim(withSite ? `  顺带同步网页代码（${files.length} 个文件）` : `  这个仓库里还没有网页，顺带把网站一起传上去（${files.length} 个文件）`));
-    for (const file of files) await push(file.rel, file.data);
+    log(c.dim(withSite ? `  顺带同步网页代码（${siteFiles.length} 个文件）` : `  这个仓库里还没有网页，顺带把网站一起传上去（${siteFiles.length} 个文件）`));
+    for (const file of siteFiles) {
+      const before = tree.length;
+      await push(file.rel, file.data);
+      if (tree.length > before) siteChanged += 1;
+    }
   }
+
+  // 前端升级（部署）之后内容文件也要重写一次：GitHub Pages 就会重新部署，
+  // 而且 data/sync-report.json 里记的 pushedAt 会比 content.updatedAt 新，后台不再显示「有还没上传的修改」
+  const mustWrite = siteChanged > 0 || siteNeeded;
+  await push(config.dataPath, dataBuf, "100644", mustWrite);
 
   // 已经转成 webp 的原图：本地还留着、云端也推过的话顺手清掉，仓库不会越堆越大
   const toDelete = [];
@@ -649,6 +663,15 @@ async function main() {
 
   // （tree 里 sha 为 null 的是删除项，也要算进去）
   if (!tree.length) {
+    // 什么都没变：本地也记一次「此刻云端是新的」，后台的判断依据才不会一直卡在旧时间
+    try {
+      fs.writeFileSync(
+        REPORT_FILE,
+        JSON.stringify({ pushedAt: new Date().toISOString(), commit: headSha, files: [], unchanged: true }, null, 2)
+      );
+    } catch (error) {
+      /* 写不了也无所谓 */
+    }
     log("");
     log(c.ok("  云端已经是最新的啦，没什么要推的 ✿"));
     log("");
