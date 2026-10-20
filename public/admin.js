@@ -294,17 +294,17 @@
       return;
     }
     if (!button) return;
-    button.hidden = LOCAL_MODE;
-    if (!LOCAL_MODE) {
-      button.classList.toggle("is-dirty", Boolean(syncState.dirty));
-      button.title = syncState.configured
-        ? `${syncState.repo}（${syncState.branch}）${syncState.dirty ? "· 有还没上传的修改" : "· 云端已是最新"}`
-        : "第一次上传会让你填仓库和 GitHub 令牌";
-      button.textContent = syncState.configured ? "☁ 上传到 GitHub" : "☁ 开始设置上传";
-      const tip = $("#syncRepo");
-      if (tip && !tip.value && syncState.repo) tip.value = syncState.repo;
-      fillSyncPanel();
-    }
+    // 只要上传服务在（server/server.js 的 /api/sync），按钮就该出现；
+    // 纯静态托管时 LOCAL_MODE 为真、/api/sync 根本不存在，上面的 catch 已经把它藏起来了
+    button.hidden = false;
+    button.classList.toggle("is-dirty", Boolean(syncState.dirty));
+    button.title = syncState.configured
+      ? `${syncState.repo}（${syncState.branch}）${syncState.dirty ? "· 有还没上传的修改" : "· 云端已是最新"}`
+      : "第一次上传会让你填仓库和 GitHub 令牌";
+    button.textContent = syncState.configured ? "☁ 上传到 GitHub" : "☁ 开始设置上传";
+    const tip = $("#syncRepo");
+    if (tip && !tip.value && syncState.repo) tip.value = syncState.repo;
+    fillSyncPanel();
   }
 
   function syncLogLine(text, kind) {
