@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="星澈的二次元头像">
+  <defs>
+    <linearGradient id="bgS" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6f1ef"/>
+      <stop offset=".52" stop-color="#e4e8f7"/>
+      <stop offset="1" stop-color="#dcd9f3"/>
+    </linearGradient>
+    <radialGradient id="glowS" cx=".5" cy=".4" r=".62">
+      <stop offset="0" stop-color="#fbfffd" stop-opacity=".95"/>
+      <stop offset=".68" stop-color="#eef7f5" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#e5e3f6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hairS" x1=".2" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#e3e5f4"/>
+      <stop offset=".48" stop-color="#c8cce6"/>
+      <stop offset="1" stop-color="#aaafd2"/>
+    </linearGradient>
+    <linearGradient id="hoodS" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#cfe9df"/>
+      <stop offset="1" stop-color="#a9d2c9"/>
+    </linearGradient>
+    <linearGradient id="irisS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#294c5d"/>
+      <stop offset=".55" stop-color="#3f7b83"/>
+      <stop offset="1" stop-color="#a4d6ce"/>
+    </linearGradient>
+    <filter id="softS" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <rect width="480" height="480" fill="url(#bgS)"/>
+  <circle cx="240" cy="242" r="204" fill="url(#glowS)"/>
+  <circle cx="240" cy="242" r="184" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="2 8"/>
+  <circle cx="98" cy="118" r="34" fill="#fff" opacity=".22" filter="url(#softS)"/>
+  <circle cx="393" cy="311" r="42" fill="#cbe5dc" opacity=".33" filter="url(#softS)"/>
+  <circle cx="387" cy="99" r="23" fill="#fff" opacity=".22" filter="url(#softS)"/>
+
+  <g fill="#fff">
+    <path d="M110 154l2.8 8.6 8.6 2.8-8.6 2.8-2.8 8.6-2.8-8.6-8.6-2.8 8.6-2.8z" opacity=".85"/>
+    <path d="M372 146l1.8 5.8 5.8 1.8-5.8 1.8-1.8 5.8-1.8-5.8-5.8-1.8 5.8-1.8z" opacity=".75"/>
+    <circle cx="386" cy="205" r="2.4" opacity=".7"/>
+    <circle cx="76" cy="312" r="3" opacity=".65"/>
+  </g>
+  <g fill="#b7d9d2" opacity=".7">
+    <path d="M392 250c5-6 12-5 15 0 3-5 10-6 15-1 4 6 0 12-7 15l-8 3-7-4c-7-4-11-9-8-13z"/>
+    <path d="M64 216c4-5 10-4 13 0 3-4 8-5 12-1 3 5 0 10-6 13l-6 2-6-3c-6-3-9-7-7-11z" opacity=".55"/>
+  </g>
+
+  <!-- back hair -->
+  <path d="M151 205c0-68 38-108 91-108 55 0 92 40 91 109 0 24 6 45 14 65 7 17-3 33-22 33-13 0-21-8-26-21l-6-20-102 1-6 20c-5 13-13 20-26 20-19 0-29-16-22-33 9-21 14-42 14-66z" fill="url(#hairS)" stroke="#8e94bb" stroke-width="2.4"/>
+  <path d="M173 183c-1-50 24-79 57-87-31 23-43 54-42 93z" fill="#f2f3fb" opacity=".55"/>
+
+  <!-- body / hoodie -->
+  <path d="M92 480c3-72 57-111 129-126h38c72 15 126 54 129 126z" fill="url(#hoodS)" stroke="#8e94bb" stroke-width="2.4"/>
+  <path d="M187 360c16 13 34 30 53 47 19-17 37-34 53-47l-15-8h-76z" fill="#f4f8f7" stroke="#8e94bb" stroke-width="2.2"/>
+  <path d="M198 352c-5 10-7 20-6 30M282 352c5 10 7 20 6 30" fill="none" stroke="#7eafa5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M188 398c10-6 20-6 29 0M292 398c-10-6-20-6-29 0" fill="none" stroke="#79a99f" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M196 407c-6 24-12 49-13 73M284 407c6 24 12 49 13 73" fill="none" stroke="#7eafa5" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="183" cy="480" r="10" fill="#f7fbfa" stroke="#8e94bb" stroke-width="2"/>
+  <circle cx="298" cy="480" r="10" fill="#f7fbfa" stroke="#8e94bb" stroke-width="2"/>
+
+  <!-- neck and face -->
+  <path d="M218 306h44v61c-6 10-15 16-22 16s-16-6-22-16z" fill="#f2ded7" stroke="#8e94bb" stroke-width="2.2"/>
+  <path d="M221 337c11 8 27 9 38 0v18c-11 9-27 9-38 0z" fill="#e5c4c1" opacity=".5"/>
+  <path d="M240 137c-44 0-76 31-79 78-3 37 6 70 27 93 14 15 32 25 52 25s38-10 52-25c21-23 30-56 27-93-3-47-35-78-79-78z" fill="#fdf0e9" stroke="#8e94bb" stroke-width="2.4"/>
+  <path d="M168 253c-10-3-16 5-13 15 3 11 11 17 19 13l4-2z" fill="#f4ddd5" stroke="#8e94bb" stroke-width="2.2"/>
+  <path d="M312 253c10-3 16 5 13 15-3 11-11 17-19 13l-4-2z" fill="#f4ddd5" stroke="#8e94bb" stroke-width="2.2"/>
+  <path d="M316 258c9 1 13 9 9 18-3 7-9 10-14 8" fill="none" stroke="#8e94bb" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- bangs -->
+  <path d="M155 225c-3-68 33-107 85-107 54 0 90 40 87 109-6-18-18-34-32-45-3 13-11 24-24 31-8-13-19-23-33-28-2 15-11 27-25 36-13-10-22-23-26-38-14 9-24 23-32 42z" fill="url(#hairS)" stroke="#8e94bb" stroke-width="2.4"/>
+  <path d="M176 195c-1-31 13-55 37-68-19 21-28 46-26 77z" fill="#f3f5fd" opacity=".6"/>
+  <path d="M314 173c9 11 15 24 18 38" fill="none" stroke="#9da3c8" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+  <path d="M277 121c4-20 18-32 34-34-12 9-18 20-17 34z" fill="url(#hairS)" stroke="#8e94bb" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M170 196c-10 34-9 68 0 91 4 10 13 10 16 1 5-24 0-52 3-78z" fill="#b8bddc" stroke="#8e94bb" stroke-width="2.2"/>
+  <path d="M312 196c10 34 9 68 0 91-4 10-13 10-16 1-5-24 0-52-3-78z" fill="#b8bddc" stroke="#8e94bb" stroke-width="2.2"/>
+
+  <!-- eyebrows -->
+  <path d="M178 214c8-4 18-3 25 2" fill="none" stroke="#7780a1" stroke-width="3" stroke-linecap="round"/>
+  <path d="M277 216c7-5 17-6 25-2" fill="none" stroke="#7780a1" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- eyes, slightly softer and narrower -->
+  <g>
+    <path d="M179 242c7-12 27-15 38-3 4 5 3 12-3 16-10 7-27 6-35-2-3-3-3-7 0-11z" fill="#3d3c58"/>
+    <path d="M183 242c6-9 22-11 31-2 3 4 2 9-3 12-8 6-21 5-27-1-2-3-3-6-1-9z" fill="#fffdfd"/>
+    <ellipse cx="201" cy="242" rx="9.5" ry="11.6" fill="url(#irisS)"/>
+    <ellipse cx="201" cy="243" rx="3.6" ry="6.4" fill="#273542"/>
+    <circle cx="197" cy="236" r="3.3" fill="#fff"/>
+    <circle cx="206" cy="247" r="1.6" fill="#fff"/>
+    <path d="M180 241c8-11 24-14 35-5" fill="none" stroke="#35344b" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M186 255c8 2 16 1 23-2" fill="none" stroke="#bd9092" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>
+  </g>
+  <g>
+    <path d="M301 242c-7-12-27-15-38-3-4 5-3 12 3 16 10 7 27 6 35-2 3-3 3-7 0-11z" fill="#3d3c58"/>
+    <path d="M297 242c-6-9-22-11-31-2-3 4-2 9 3 12 8 6 21 5 27-1 2-3 3-6 1-9z" fill="#fffdfd"/>
+    <ellipse cx="279" cy="242" rx="9.5" ry="11.6" fill="url(#irisS)"/>
+    <ellipse cx="279" cy="243" rx="3.6" ry="6.4" fill="#273542"/>
+    <circle cx="275" cy="236" r="3.3" fill="#fff"/>
+    <circle cx="284" cy="247" r="1.6" fill="#fff"/>
+    <path d="M300 241c-8-11-24-14-35-5" fill="none" stroke="#35344b" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M294 255c-8 2-16 1-23-2" fill="none" stroke="#bd9092" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>
+  </g>
+
+  <!-- blush and mouth -->
+  <g fill="#eda9aa" opacity=".35">
+    <ellipse cx="177" cy="269" rx="15" ry="6"/>
+    <ellipse cx="303" cy="269" rx="15" ry="6"/>
+  </g>
+  <path d="M239 262c2 2 4 2 6 0" fill="none" stroke="#c58e90" stroke-width="2" stroke-linecap="round"/>
+  <path d="M229 281c7 7 18 7 23 1-2 9-18 11-23-1z" fill="#b86d76" stroke="#955861" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M234 285c4 2 8 2 12 0" fill="none" stroke="#e6a1a3" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- star earring -->
+  <path d="M321 267l4.2 8.5 9.3 1.4-6.7 6.5 1.6 9.2-8.4-4.4-8.4 4.4 1.6-9.2-6.7-6.5 9.3-1.4z" fill="#f5e6b8" stroke="#c9b479" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="321" cy="277" r="2.2" fill="#fff6dc"/>
+
+  <!-- headphones around neck -->
+  <path d="M159 372c8-31 31-47 53-47M321 372c-8-31-31-47-53-47" fill="none" stroke="#b0a8d7" stroke-width="12" stroke-linecap="round"/>
+  <path d="M159 372c8-31 31-47 53-47M321 372c-8-31-31-47-53-47" fill="none" stroke="#c8c2e6" stroke-width="7" stroke-linecap="round"/>
+  <rect x="142" y="350" width="31" height="42" rx="14" fill="#b3a9d8" stroke="#8e94bb" stroke-width="2.2" transform="rotate(-9 157 371)"/>
+  <rect x="307" y="350" width="31" height="42" rx="14" fill="#b3a9d8" stroke="#8e94bb" stroke-width="2.2" transform="rotate(9 322 371)"/>
+  <path d="M150 362h15M315 362h15" stroke="#f0ebfb" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+
+  <!-- star hair clip -->
+  <g transform="translate(296 160) rotate(12)">
+    <path d="M0-14l4 9 10 1-7.5 7 2 10L0 7l-8.5 6 2-10-7.5-7 10-1z" fill="#f6e7b5" stroke="#cbb77a" stroke-width="1.4" stroke-linejoin="round"/>
+  </g>
+
+  <!-- sparkles foreground -->
+  <g fill="#fff">
+    <path d="M106 380l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z" opacity=".85"/>
+    <path d="M371 330l1.7 5.4 5.4 1.7-5.4 1.7-1.7 5.4-1.7-5.4-5.4-1.7 5.4-1.7z" opacity=".7"/>
+  </g>
+</svg>

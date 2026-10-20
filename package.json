@@ -1,0 +1,13 @@
+{
+  "name": "fuwari-blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ふわり Fuwari — 二次元个人博客（首页 + VRC 砂糖情侣）＋ 零依赖管理后台",
+  "scripts": {
+    "start": "node server/server.js",
+    "setup": "node server/setup-admin.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

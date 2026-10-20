@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ふわり">
+  <defs>
+    <linearGradient id="fbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdfb"/>
+      <stop offset="1" stop-color="#f9e9f4"/>
+    </linearGradient>
+    <linearGradient id="fp" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d7c5f1"/>
+      <stop offset="1" stop-color="#aa90d9"/>
+    </linearGradient>
+    <linearGradient id="fh" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9c6d5"/>
+      <stop offset="1" stop-color="#ea9ab1"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#fbg)"/>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#ead7e8" stroke-width="1.4"/>
+  <g transform="translate(32 32)" fill="url(#fp)">
+    <path d="M0-17c-5 2-8 7-7 13 1 4 4 7 7 7s6-3 7-7c1-6-2-11-7-13z" transform="rotate(0) translate(0 -8)"/>
+    <path d="M0-17c-5 2-8 7-7 13 1 4 4 7 7 7s6-3 7-7c1-6-2-11-7-13z" transform="rotate(72) translate(0 -8)"/>
+    <path d="M0-17c-5 2-8 7-7 13 1 4 4 7 7 7s6-3 7-7c1-6-2-11-7-13z" transform="rotate(144) translate(0 -8)"/>
+    <path d="M0-17c-5 2-8 7-7 13 1 4 4 7 7 7s6-3 7-7c1-6-2-11-7-13z" transform="rotate(216) translate(0 -8)"/>
+    <path d="M0-17c-5 2-8 7-7 13 1 4 4 7 7 7s6-3 7-7c1-6-2-11-7-13z" transform="rotate(288) translate(0 -8)"/>
+  </g>
+  <path d="M32 25c4-5 11-2 11 4 0 6-8 10-11 14-3-4-11-8-11-14 0-6 7-9 11-4z" fill="url(#fh)"/>
+</svg>

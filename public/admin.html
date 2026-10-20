@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ふわり 管理后台 · Fuwari Admin</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <!-- ============ 登录 ============ -->
+  <div class="login hidden" id="loginView">
+    <form class="login-card" id="loginForm" autocomplete="on">
+      <div class="brand-mark">✿</div>
+      <h1>ふわり 管理后台</h1>
+      <p class="sub" id="loginHint">登录后可以修改人物名字与头像、写文章、换图集，改完前台立刻生效。</p>
+      <label class="field">
+        <span>用户名</span>
+        <input class="input" type="text" name="username" autocomplete="username" required>
+      </label>
+      <label class="field">
+        <span>口令</span>
+        <input class="input" type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn-primary btn-block" type="submit">进入后台</button>
+      <p class="hint" id="setupHint" hidden>
+        还没有管理员账号？在项目目录运行 <code>node server/setup-admin.js</code> 设置一个。
+      </p>
+    </form>
+  </div>
+
+  <!-- ============ 后台 ============ -->
+  <div class="app hidden" id="appView">
+    <aside class="side">
+      <div class="side-brand">
+        <span class="dot">✿</span>
+        <span>
+          <strong>ふわり</strong>
+          <small>FUWARI ADMIN</small>
+        </span>
+      </div>
+      <button class="tab is-active" type="button" data-tab="people"><span class="ico">♥</span>人物资料</button>
+      <button class="tab" type="button" data-tab="couple"><span class="ico">✿</span>情侣与纪念日</button>
+      <button class="tab" type="button" data-tab="posts"><span class="ico">✎</span>文章<span class="count" id="countPosts">0</span></button>
+      <button class="tab" type="button" data-tab="gallery"><span class="ico">▣</span>图集<span class="count" id="countGallery">0</span></button>
+      <button class="tab" type="button" data-tab="wall"><span class="ico">❒</span>合照墙<span class="count" id="countWall">0</span></button>
+      <button class="tab" type="button" data-tab="timeline"><span class="ico">⌛</span>时间线<span class="count" id="countTimeline">0</span></button>
+      <button class="tab" type="button" data-tab="notes"><span class="ico">✦</span>留言<span class="count" id="countNotes">0</span></button>
+      <button class="tab" type="button" data-tab="site"><span class="ico">⌂</span>站点与页脚</button>
+      <button class="tab" type="button" data-tab="account"><span class="ico">⚙</span>账号与备份</button>
+
+      <div class="side-foot">
+        <a href="../index.html" target="_blank" rel="noopener">↗ 打开博客前台</a>
+        <span id="sideUpdated">—</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h2 id="pageTitle">人物资料</h2>
+        <span class="crumb" id="pageCrumb"></span>
+        <span class="spacer"></span>
+        <span class="save-state" id="saveState">已保存</span>
+        <button class="btn btn-ghost btn-sm" type="button" id="reloadBtn">重新读取</button>
+        <button class="btn btn-primary btn-sm" type="button" id="saveBtn">保存修改</button>
+      </div>
+
+      <!-- 人物资料 -->
+      <section class="tab-panel" data-panel="people">
+        <div class="grid-2">
+          <div class="panel" data-person="owner">
+            <div class="panel-head">
+              <h3>柚子的资料</h3>
+              <span class="spacer"></span>
+              <span class="hint">前台：情侣页左侧、VRC 资料卡、关于我</span>
+            </div>
+            <div class="avatar-pick">
+              <img class="preview" data-img-for="owner" alt="">
+              <div class="pick-actions">
+                <div class="row">
+                  <button class="btn btn-pink btn-sm" type="button" data-pick-image="owner">上传 / 选择头像</button>
+                  <button class="btn btn-ghost btn-sm" type="button" data-pick-image="owner" data-mode="wide">换封面图</button>
+                </div>
+                <div class="url-row">
+                  <input class="input slim" data-field="owner.avatar" placeholder="图片地址，例如 assets/img/avatar-yuzu.svg">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="field"><span>名字（中文）</span><input class="input" data-field="owner.name"></label>
+              <label class="field"><span>英文名</span><input class="input" data-field="owner.latin"></label>
+            </div>
+            <label class="field"><span>身份 / 一句话介绍</span><input class="input" data-field="owner.roles" placeholder="插画师 / 世界建造者"></label>
+            <div class="row">
+              <label class="field"><span>展示用 ID</span><input class="input" data-field="owner.handle" placeholder="@yuzu_mochi"></label>
+              <label class="field"><span>VRChat ID（可复制）</span><input class="input" data-field="owner.vrcId" placeholder="Yuzu_mochi"></label>
+            </div>
+            <div class="row">
+              <label class="field"><span>情侣卡状态文字</span><input class="input" data-field="owner.status"></label>
+              <label class="field"><span>VRC 卡状态文字</span><input class="input" data-field="owner.vrcStatus"></label>
+            </div>
+            <div class="row">
+              <label class="check"><input type="checkbox" data-field="owner.statusAway"> 情侣卡显示「挂机中」样式</label>
+              <label class="check"><input type="checkbox" data-field="owner.vrcStatusAway"> VRC 卡显示「挂机中」样式</label>
+            </div>
+            <label class="field" style="margin-top:12px"><span>头像 alt 描述</span><input class="input" data-field="owner.alt"></label>
+            <label class="field"><span>VRC 卡签名</span><textarea class="textarea" data-field="owner.bio" rows="2"></textarea></label>
+            <div class="row">
+              <label class="field"><span>VRC 封面文字</span><input class="input" data-field="owner.vrcCover"></label>
+              <label class="field"><span>和 TA 的关系</span><input class="input" data-field="owner.mutual" placeholder="与星澈 · 同居中"></label>
+            </div>
+            <label class="field-label">VRC 资料项（模型 / 身高 / 喜欢的世界 / 上线时间…）</label>
+            <div class="list" data-list="owner.info"></div>
+            <button class="btn btn-ghost btn-sm" type="button" data-list-add="owner.info" style="margin-top:8px">＋ 添加一行</button>
+            <label class="field-label" style="margin-top:16px">标签</label>
+            <div class="tag-list" data-tags="owner.tags"></div>
+            <div class="url-row" style="margin-top:8px">
+              <input class="input slim" data-tag-input="owner.tags" placeholder="输入标签后回车">
+              <button class="btn btn-ghost btn-sm" type="button" data-tag-add="owner.tags">添加</button>
+            </div>
+          </div>
+
+          <div class="panel" data-person="partner">
+            <div class="panel-head">
+              <h3>星澈的资料</h3>
+              <span class="spacer"></span>
+              <span class="hint">前台：情侣页右侧、另一张 VRC 资料卡</span>
+            </div>
+            <div class="avatar-pick">
+              <img class="preview" data-img-for="partner" alt="">
+              <div class="pick-actions">
+                <div class="row">
+                  <button class="btn btn-pink btn-sm" type="button" data-pick-image="partner">上传 / 选择头像</button>
+                  <button class="btn btn-ghost btn-sm" type="button" data-pick-image="partner" data-mode="wide">换封面图</button>
+                </div>
+                <div class="url-row">
+                  <input class="input slim" data-field="partner.avatar" placeholder="图片地址，例如 assets/img/avatar-sei.svg">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="field"><span>名字（中文）</span><input class="input" data-field="partner.name"></label>
+              <label class="field"><span>英文名</span><input class="input" data-field="partner.latin"></label>
+            </div>
+            <label class="field"><span>身份 / 一句话介绍</span><input class="input" data-field="partner.roles"></label>
+            <div class="row">
+              <label class="field"><span>展示用 ID</span><input class="input" data-field="partner.handle"></label>
+              <label class="field"><span>VRChat ID（可复制）</span><input class="input" data-field="partner.vrcId"></label>
+            </div>
+            <div class="row">
+              <label class="field"><span>情侣卡状态文字</span><input class="input" data-field="partner.status"></label>
+              <label class="field"><span>VRC 卡状态文字</span><input class="input" data-field="partner.vrcStatus"></label>
+            </div>
+            <div class="row">
+              <label class="check"><input type="checkbox" data-field="partner.statusAway"> 情侣卡显示「挂机中」样式</label>
+              <label class="check"><input type="checkbox" data-field="partner.vrcStatusAway"> VRC 卡显示「挂机中」样式</label>
+            </div>
+            <label class="field" style="margin-top:12px"><span>头像 alt 描述</span><input class="input" data-field="partner.alt"></label>
+            <label class="field"><span>VRC 卡签名</span><textarea class="textarea" data-field="partner.bio" rows="2"></textarea></label>
+            <div class="row">
+              <label class="field"><span>VRC 封面文字</span><input class="input" data-field="partner.vrcCover"></label>
+              <label class="field"><span>和 TA 的关系</span><input class="input" data-field="partner.mutual"></label>
+            </div>
+            <label class="field-label">VRC 资料项</label>
+            <div class="list" data-list="partner.info"></div>
+            <button class="btn btn-ghost btn-sm" type="button" data-list-add="partner.info" style="margin-top:8px">＋ 添加一行</button>
+            <label class="field-label" style="margin-top:16px">标签</label>
+            <div class="tag-list" data-tags="partner.tags"></div>
+            <div class="url-row" style="margin-top:8px">
+              <input class="input slim" data-tag-input="partner.tags" placeholder="输入标签后回车">
+              <button class="btn btn-ghost btn-sm" type="button" data-tag-add="partner.tags">添加</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>关于我（页面底部）</h3></div>
+          <div class="row">
+            <label class="field"><span>小标题</span><input class="input" data-field="about.eyebrow" placeholder="ABOUT YUZU"></label>
+            <label class="field"><span>标题前半句</span><input class="input" data-field="owner.aboutTitle" placeholder="你好，我是"></label>
+          </div>
+          <label class="field"><span>正文段落（一行一段）</span><textarea class="textarea" data-field="owner.aboutParagraphs" data-mode="lines" rows="5"></textarea></label>
+          <div class="row">
+            <label class="field"><span>手写签名</span><input class="input" data-field="owner.signature"></label>
+            <label class="field"><span>签名旁的小字</span><input class="input" data-field="owner.signNote"></label>
+          </div>
+          <label class="field-label">关于我标签</label>
+          <div class="tag-list" data-tags="owner.aboutTags"></div>
+          <div class="url-row" style="margin-top:8px">
+            <input class="input slim" data-tag-input="owner.aboutTags" placeholder="输入标签后回车">
+            <button class="btn btn-ghost btn-sm" type="button" data-tag-add="owner.aboutTags">添加</button>
+          </div>
+          <label class="field-label" style="margin-top:16px">现在在做什么</label>
+          <div class="list" data-list="owner.currently"></div>
+          <button class="btn btn-ghost btn-sm" type="button" data-list-add="owner.currently" style="margin-top:8px">＋ 添加一行</button>
+          <label class="field" style="margin-top:12px"><span>文章弹窗底部的签名小字</span><input class="input" data-field="owner.readNote"></label>
+        </div>
+      </section>
+
+      <!-- 情侣与纪念日 -->
+      <section class="tab-panel hidden" data-panel="couple">
+        <div class="panel">
+          <div class="panel-head"><h3>我们的纪念日</h3><span class="spacer"></span><span class="hint">改成你们在一起的日期，天数和倒计时会自动重算</span></div>
+          <div class="row">
+            <label class="field"><span>在一起的时刻</span><input class="input" type="datetime-local" data-field="couple.since" data-type="localISO"></label>
+            <label class="field"><span>显示的日期文字</span><input class="input" data-field="couple.sinceLabel" placeholder="2022.05.20"></label>
+            <label class="field"><span>纪念日（月-日）</span><input class="input" data-field="couple.anniversary" placeholder="05-20"></label>
+          </div>
+          <label class="field"><span>首页小卡片的话</span><input class="input" data-field="site.countdownNote"></label>
+          <label class="field"><span>倒计时下面的愿望</span><textarea class="textarea" data-field="couple.wish" rows="2"></textarea></label>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>情侣页标题区</h3></div>
+          <div class="row-3 row">
+            <label class="field"><span>大标题前半</span><input class="input" data-field="couple.titleTop"></label>
+            <label class="field"><span>大标题后半（描边）</span><input class="input" data-field="couple.titleBottom"></label>
+            <label class="field"><span>小英文行</span><input class="input" data-field="couple.eyebrow"></label>
+          </div>
+          <label class="field"><span>开场介绍（可用 &lt;br&gt; 换行）</span><textarea class="textarea" data-field="couple.lede" rows="3"></textarea></label>
+          <label class="field"><span>VRC 资料区下方的小纸条</span><textarea class="textarea" data-field="couple.note" rows="3"></textarea></label>
+          <div class="row">
+            <label class="field"><span>合照墙结尾的话</span><input class="input" data-field="couple.wallNote"></label>
+            <label class="field"><span>时间线结尾的话</span><input class="input" data-field="couple.timelineFoot"></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 文章 -->
+      <section class="tab-panel hidden" data-panel="posts">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>手帐文章</h3>
+            <span class="hint">第一篇会作为首页大卡片，其余依次排布</span>
+            <span class="spacer"></span>
+            <button class="btn btn-pink btn-sm" type="button" id="newPost">＋ 写新文章</button>
+          </div>
+          <div class="list" id="postList"></div>
+        </div>
+      </section>
+
+      <!-- 图集 -->
+      <section class="tab-panel hidden" data-panel="gallery">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>首页图集</h3>
+            <span class="hint">点击图片可更换，上下箭头调整顺序</span>
+            <span class="spacer"></span>
+            <button class="btn btn-pink btn-sm" type="button" id="newGallery">＋ 添加图片</button>
+          </div>
+          <div class="list" id="galleryList"></div>
+        </div>
+      </section>
+
+      <!-- 合照墙 -->
+      <section class="tab-panel hidden" data-panel="wall">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>合照墙（拍立得）</h3>
+            <span class="spacer"></span>
+            <button class="btn btn-pink btn-sm" type="button" id="newWall">＋ 添加合照</button>
+          </div>
+          <div class="list" id="wallList"></div>
+        </div>
+      </section>
+
+      <!-- 时间线 -->
+      <section class="tab-panel hidden" data-panel="timeline">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>我们的小时间线</h3>
+            <span class="spacer"></span>
+            <button class="btn btn-pink btn-sm" type="button" id="newTimeline">＋ 添加节点</button>
+          </div>
+          <div class="list" id="timelineList"></div>
+        </div>
+      </section>
+
+      <!-- 留言 -->
+      <section class="tab-panel hidden" data-panel="notes">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>留言糖果罐</h3>
+            <span class="hint">访客在前台投的糖也会出现在这里，可以删除</span>
+            <span class="spacer"></span>
+            <button class="btn btn-pink btn-sm" type="button" id="newNote">＋ 添加一条</button>
+          </div>
+          <div class="list" id="noteList"></div>
+        </div>
+      </section>
+
+      <!-- 站点 -->
+      <section class="tab-panel hidden" data-panel="site">
+        <div class="panel">
+          <div class="panel-head"><h3>站点信息</h3></div>
+          <div class="row">
+            <label class="field"><span>站名</span><input class="input" data-field="site.brand"></label>
+            <label class="field"><span>站名小字</span><input class="input" data-field="site.brandEn"></label>
+            <label class="field"><span>浏览器标题</span><input class="input" data-field="site.title"></label>
+          </div>
+          <label class="field"><span>首页副标题</span><input class="input" data-field="site.tagline"></label>
+          <div class="row">
+            <label class="field"><span>大标题第一行</span><input class="input" data-field="site.heroTitleTop"></label>
+            <label class="field"><span>大标题第二行</span><input class="input" data-field="site.heroTitleBottom"></label>
+          </div>
+          <label class="field"><span>首页介绍</span><textarea class="textarea" data-field="site.lede" rows="2"></textarea></label>
+          <div class="avatar-pick">
+            <img class="preview is-wide" data-img-for="site" alt="">
+            <div class="pick-actions">
+              <div class="row">
+                <button class="btn btn-pink btn-sm" type="button" data-pick-image="site" data-pick-path="site.heroImage" data-mode="wide">上传 / 选择首页插画</button>
+              </div>
+              <div class="url-row"><input class="input slim" data-field="site.heroImage" placeholder="图片地址"></div>
+            </div>
+          </div>
+          <div class="avatar-pick">
+            <img class="preview" data-img-for="site.logo" alt="">
+            <div class="pick-actions">
+              <div class="row">
+                <button class="btn btn-ghost btn-sm" type="button" data-pick-image="site" data-pick-path="site.logo" data-mode="circle">上传 / 选择站点图标</button>
+              </div>
+              <div class="url-row"><input class="input slim" data-field="site.logo" placeholder="站点图标地址（SVG / PNG）"></div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="field"><span>首页插画说明</span><input class="input" data-field="site.heroCaption"></label>
+            <label class="field"><span>今日心情</span><input class="input" data-field="site.moodWord"></label>
+          </div>
+          <div class="row">
+            <label class="field"><span>心情卡片标题</span><input class="input" data-field="site.moodLabel"></label>
+            <label class="field"><span>心情卡片小字</span><input class="input" data-field="site.moodNote"></label>
+            <label class="field"><span>页眉年份</span><input class="input" data-field="site.eyebrowYear"></label>
+          </div>
+          <label class="field"><span>跑马灯文字（用逗号分隔）</span><textarea class="textarea" data-field="site.ticker" data-mode="csv" rows="2"></textarea></label>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>页脚</h3></div>
+          <label class="field"><span>页脚介绍（可用 &lt;br&gt; 换行）</span><textarea class="textarea" data-field="site.footerText" rows="2"></textarea></label>
+          <div class="row">
+            <label class="field"><span>页脚手写小字</span><input class="input" data-field="site.footerScript"></label>
+            <label class="field"><span>今日小纸条</span><textarea class="textarea" data-field="site.footerNote" rows="2"></textarea></label>
+          </div>
+          <label class="field"><span>版权行</span><input class="input" data-field="site.copyright"></label>
+          <label class="field-label">联系方式 / 外链</label>
+          <div class="list" data-list="site.links"></div>
+          <button class="btn btn-ghost btn-sm" type="button" data-list-add="site.links" style="margin-top:8px">＋ 添加一项</button>
+        </div>
+      </section>
+
+      <!-- 账号 -->
+      <section class="tab-panel hidden" data-panel="account">
+        <div class="panel">
+          <div class="panel-head"><h3>修改账号</h3></div>
+          <div class="row">
+            <label class="field"><span>用户名</span><input class="input" id="accUser"></label>
+            <label class="field"><span>当前口令</span><input class="input" type="password" id="accCurrent" autocomplete="current-password"></label>
+          </div>
+          <div class="row">
+            <label class="field"><span>新口令（至少 8 位）</span><input class="input" type="password" id="accNext" autocomplete="new-password"></label>
+            <label class="field"><span>再输一次</span><input class="input" type="password" id="accNext2" autocomplete="new-password"></label>
+          </div>
+          <button class="btn btn-primary" type="button" id="accSave">更新账号</button>
+          <button class="btn btn-ghost" type="button" id="logoutBtn">退出登录</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>备份与恢复</h3></div>
+          <p class="hint">所有内容都保存在 <code>data/content.json</code>，上传的图片在 <code>uploads/</code>。定期备份一下会更安心。</p>
+          <div class="row" style="margin-top:12px">
+            <button class="btn btn-ghost" type="button" id="backupBtn">下载内容备份（JSON）</button>
+            <button class="btn btn-ghost" type="button" id="restoreBtn">从备份恢复…</button>
+            <button class="btn btn-danger" type="button" id="resetBtn">恢复成初始示例内容</button>
+          </div>
+          <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 编辑抽屉 -->
+  <div class="editor hidden" id="editor">
+    <div class="editor-shell">
+      <div class="editor-head">
+        <h3 id="editorTitle">编辑</h3>
+        <button class="btn btn-ghost btn-sm" type="button" id="editorCancel">取消</button>
+        <button class="btn btn-primary btn-sm" type="button" id="editorSave">完成</button>
+      </div>
+      <div id="editorBody"></div>
+    </div>
+  </div>
+
+  <!-- 图片挑选 -->
+  <div class="picker hidden" id="picker">
+    <div class="picker-shell">
+      <div class="picker-head">
+        <h3>选择图片</h3>
+        <label class="btn btn-pink btn-sm">上传图片<input type="file" id="pickerFile" accept="image/*" multiple hidden></label>
+        <button class="btn btn-ghost btn-sm" type="button" id="pickerClose">关闭</button>
+      </div>
+      <label class="picker-drop" id="pickerDrop">
+        <strong>把图片拖进来，或点击选择</strong>
+        支持 JPG / PNG / WebP / GIF / SVG，单张 8MB 以内
+      </label>
+      <div class="picker-body">
+        <div class="picker-grid" id="pickerGrid"></div>
+      </div>
+      <div class="picker-foot">
+        <input class="input" id="pickerUrl" placeholder="也可以直接粘贴图片网址…">
+        <button class="btn btn-primary btn-sm" type="button" id="pickerUseUrl">使用这个地址</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="雨天午后安静发光的房间">
+  <defs>
+    <linearGradient id="wallR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6ebe7"/>
+      <stop offset="1" stop-color="#eadedf"/>
+    </linearGradient>
+    <linearGradient id="rainSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fa9c4"/>
+      <stop offset=".6" stop-color="#bcc3d5"/>
+      <stop offset="1" stop-color="#d6d0da"/>
+    </linearGradient>
+    <linearGradient id="lampR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe7b4"/>
+      <stop offset="1" stop-color="#f2c98f"/>
+    </linearGradient>
+    <radialGradient id="lampGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffe5b0" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#ffe5b0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="deskR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9b79c"/>
+      <stop offset="1" stop-color="#b98f78"/>
+    </linearGradient>
+    <filter id="softR" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#wallR)"/>
+  <g opacity=".22" stroke="#cbb6b9" stroke-width="1.4">
+    <path d="M0 43h800M0 132h800M0 221h800M0 310h800"/>
+    <path d="M78 0v600M241 0v600M404 0v600M567 0v600M730 0v600"/>
+  </g>
+
+  <!-- window -->
+  <g transform="translate(438 54)">
+    <path d="M-24-14h340v348H-24z" fill="#c2a8a6"/>
+    <path d="M-10 0h312v320H-10z" fill="url(#rainSky)"/>
+    <g opacity=".7">
+      <path d="M-10 231c50-27 87-20 122 3 43-24 83-18 112 4 30-13 55-12 78 2v80H-10z" fill="#8f98b1" opacity=".55"/>
+      <path d="M-10 264c40-16 72-12 105 4 47-15 91-10 122 5 33-11 59-9 85 5v42H-10z" fill="#7e879f" opacity=".5"/>
+      <path d="M-10 292c52-9 97-4 148 6 58-8 110-4 164 5v17H-10z" fill="#6e7893" opacity=".45"/>
+    </g>
+    <g stroke="#e9eef8" stroke-width="2.2" stroke-linecap="round" opacity=".75">
+      <path d="M22 30l-7 22M67 18l-8 24M112 42l-7 20M158 24l-8 25M205 46l-6 18M250 22l-8 24M288 47l-6 19"/>
+      <path d="M34 88l-6 19M82 77l-7 21M130 96l-6 18M177 81l-7 22M225 100l-5 16M269 79l-7 22"/>
+      <path d="M17 145l-6 20M64 132l-7 22M116 152l-6 18M164 136l-7 21M212 155l-5 17M260 134l-7 22"/>
+      <path d="M37 196l-5 17M88 186l-6 19M139 202l-5 16M190 187l-6 19M240 203l-5 16M286 191l-5 15"/>
+    </g>
+    <g fill="#f6e7bb" opacity=".75">
+      <circle cx="46" cy="62" r="3"/><circle cx="194" cy="38" r="2.2"/><circle cx="272" cy="105" r="2.6"/>
+      <circle cx="97" cy="170" r="2"/><circle cx="231" cy="181" r="2.4"/>
+    </g>
+    <path d="M146 0v320M-10 158h312" stroke="#c2a8a6" stroke-width="10"/>
+    <path d="M-10 0h312v320H-10z" fill="none" stroke="#ab918f" stroke-width="3"/>
+    <path d="M-38 314h368l8 18h-384z" fill="#e8d9d2" stroke="#bfa6a2" stroke-width="2"/>
+  </g>
+
+  <!-- rain on glass -->
+  <g stroke="#eef2fa" stroke-width="1.5" opacity=".5">
+    <path d="M470 122c3 13 3 22 0 33M545 190c3 11 3 19 0 28M618 148c3 12 3 20 0 30M690 214c3 10 3 17 0 26M507 246c3 9 3 16 0 24M725 120c3 11 3 18 0 27"/>
+  </g>
+
+  <!-- curtains -->
+  <path d="M418 20c-14-4-29 5-33 21-10 40-4 100 6 153 8 44 13 92 8 133-2 16 16 21 24 7 8-15 9-43 8-79-2-65-1-129 4-179 3-25-3-51-17-56z" fill="#d8c3d3" opacity=".9" stroke="#bda4b6" stroke-width="2"/>
+  <path d="M758 24c13-5 25 4 29 18 9 30 9 74 2 113-7 42-18 84-27 124-9 39-37 34-35 2 2-43 13-98 18-142 5-42 4-83 1-102-2-8 4-11 12-13z" fill="#d8c3d3" opacity=".9" stroke="#bda4b6" stroke-width="2"/>
+  <path d="M432 62c8 40 8 87 6 131M447 246c2 27 2 52 0 75M746 70c-5 35-13 74-22 108M728 262c-5 21-9 41-12 58" fill="none" stroke="#f0e2ec" stroke-width="3" opacity=".7"/>
+
+  <!-- wall art & shelf -->
+  <g transform="translate(118 92)">
+    <path d="M0 0h128v148H0z" fill="#fbf5ec" stroke="#c0a79f" stroke-width="3"/>
+    <path d="M12 12h104v124H12z" fill="#efe2e6"/>
+    <path d="M34 108c8-30 15-48 26-50 12-2 19 16 25 31 5 12 9 16 15 19" fill="none" stroke="#b7a2c8" stroke-width="3"/>
+    <circle cx="76" cy="47" r="13" fill="#f2c5c9"/>
+    <path d="M12 96c22-8 40-3 56 8 17-9 32-10 48-4v36H12z" fill="#d9e0d2"/>
+  </g>
+  <g transform="translate(86 272)">
+    <path d="M0 0h178v10H0z" fill="#c7a98f"/>
+    <g transform="translate(24 -38)">
+      <path d="M0 0h34v38H0z" fill="#e7c9b2" stroke="#b9947a" stroke-width="1.6"/>
+      <path d="M4 8h26M4 17h26M4 26h26" stroke="#c9a98d" stroke-width="2"/>
+      <circle cx="17" cy="-4" r="7" fill="#c9b6db"/>
+    </g>
+    <g transform="translate(78 -30)">
+      <path d="M0 0h22v30H0z" fill="#cfd9cc" stroke="#a8b3a5" stroke-width="1.6"/>
+      <path d="M11-6c-9-9-3-19 4-24M11-6c8-8 17-4 20 4" fill="none" stroke="#8fa48d" stroke-width="2"/>
+      <g fill="#f4e6c2"><circle cx="2" cy="12" r="3"/><circle cx="15" cy="18" r="3"/><circle cx="21" cy="9" r="2.5"/></g>
+    </g>
+    <g transform="translate(124 -24)">
+      <path d="M0 0h26v24H0z" fill="#dfd0e7" stroke="#b6a4c7" stroke-width="1.4"/>
+      <path d="M4 6h18M4 12h18M4 18h12" stroke="#f7effa" stroke-width="1.6"/>
+    </g>
+  </g>
+
+  <!-- hanging plant -->
+  <g transform="translate(352 0)">
+    <path d="M0 0c-2 42 4 76 14 102" fill="none" stroke="#b1917f" stroke-width="2"/>
+    <path d="M0 96c-18 16-26 38-24 61h60c1-24-8-45-26-61z" fill="#e9dbc8" stroke="#c4ad96" stroke-width="2"/>
+    <g fill="#8fa78d">
+      <path d="M-2 96c-24-14-38-2-36 16 2 16 20 20 33 7z"/>
+      <path d="M10 96c28-8 38 6 33 22-4 14-22 15-33 0z"/>
+      <path d="M4 100c-18 6-28 22-25 36 16 1 27-9 31-25z"/>
+      <path d="M13 104c19 7 27 22 22 35-14 0-24-11-27-26z"/>
+    </g>
+    <g fill="#a9bda4" opacity=".7">
+      <path d="M-22 63c-19 2-30 14-32 28 15 4 28-3 36-16z"/>
+      <path d="M20 62c17 4 26 15 26 27-13 2-24-4-30-15z"/>
+    </g>
+  </g>
+
+  <!-- desk -->
+  <path d="M0 462h800v138H0z" fill="url(#deskR)"/>
+  <path d="M0 462h800v14H0z" fill="#efd8c3"/>
+  <path d="M0 476h800" stroke="#a9806a" stroke-width="2"/>
+  <g stroke="#a9806a" stroke-width="1.4" opacity=".35">
+    <path d="M0 512h800M0 549h800M0 586h800"/>
+    <path d="M137 476v124M392 476v124M647 476v124"/>
+  </g>
+
+  <!-- lamp -->
+  <g transform="translate(596 356)">
+    <circle cx="26" cy="36" r="150" fill="url(#lampGlow)" filter="url(#softR)"/>
+    <ellipse cx="24" cy="158" rx="54" ry="10" fill="#a48372" opacity=".35"/>
+    <path d="M24 152c-4-40 2-70 16-92" fill="none" stroke="#8f7765" stroke-width="5" stroke-linecap="round"/>
+    <path d="M24 126h34" stroke="#8f7765" stroke-width="4"/>
+    <path d="M38 50h54l16 40H24z" fill="url(#lampR)" stroke="#be9a66" stroke-width="2.4"/>
+    <path d="M24 90h84l-4 8H28z" fill="#e8c08b"/>
+    <circle cx="66" cy="103" r="10" fill="#fff2c6" opacity=".95"/>
+    <circle cx="66" cy="103" r="28" fill="#ffe3a6" opacity=".35" filter="url(#softR)"/>
+  </g>
+
+  <!-- mug and steam -->
+  <g transform="translate(492 416)">
+    <path d="M-31 10c-4 0-7 4-7 9v18c0 4 3 7 6 7h1" fill="none" stroke="#c5a9ad" stroke-width="7"/>
+    <path d="M-34 6h68l-7 52c-1 7-7 12-14 12h-26c-7 0-13-5-14-12z" fill="#fbf2e9" stroke="#c3a2a0" stroke-width="2.4"/>
+    <path d="M-30 20c18 5 39 5 58 0" fill="none" stroke="#e7c8c3" stroke-width="3"/>
+    <path d="M-34 6h68" stroke="#d2b3ae" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-6-4c-6-10 6-15 2-26M12-2c-5-9 6-14 3-24M27-3c-4-8 5-12 3-21" fill="none" stroke="#efe3e1" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <path d="M-13 26c3-4 9-4 12 0-1 6-5 9-6 9s-5-3-6-9z" fill="#eab3bd"/>
+  </g>
+
+  <!-- open journal and pen -->
+  <g transform="translate(186 420)">
+    <path d="M-4 8c30-12 75-12 104 0v66c-31-10-72-10-104 0z" fill="#fdf7ec" stroke="#c0a894" stroke-width="2.2"/>
+    <path d="M100 8c26-8 62-8 84 2v64c-25-8-58-8-84-2z" fill="#fffaf2" stroke="#c0a894" stroke-width="2.2"/>
+    <path d="M100 8v66" stroke="#d8c4b4" stroke-width="2"/>
+    <g stroke="#c8b9d6" stroke-width="1.4" opacity=".8">
+      <path d="M16 28c20-5 43-5 65-1M16 40c20-5 43-5 65-1M16 52c14-3 30-3 44 0"/>
+      <path d="M112 30c15-3 35-3 56 2M112 42c15-3 35-3 56 2M112 54c11-2 25-2 37 0"/>
+    </g>
+    <path d="M34 22c9-7 19-6 26 2 5 7-2 14-9 10-6-3-4-11 4-13" fill="none" stroke="#e1aab4" stroke-width="1.6"/>
+    <g transform="translate(126 61) rotate(-16)">
+      <rect x="0" y="0" width="58" height="7" rx="3.5" fill="#c9a5ac"/>
+      <path d="M58 0l9 3.5-9 3.5z" fill="#8f7581"/>
+    </g>
+  </g>
+
+  <!-- floor cushion / plant bottom left -->
+  <g transform="translate(52 536)">
+    <path d="M0 44c-6-22 8-40 30-44 25-4 45 12 46 33 1 19-13 31-36 31-20 0-36-6-40-20z" fill="#e7d6c4" stroke="#c1a98f" stroke-width="2"/>
+    <path d="M12 30c10-8 25-10 38-5" fill="none" stroke="#d3bda6" stroke-width="3"/>
+    <g transform="translate(16 -10)" stroke="#8aa189" stroke-width="2.4" fill="none">
+      <path d="M0 10c-2-20 8-34 22-38M4 10c8-16 20-22 32-22M-2 10c-10-13-20-16-30-14"/>
+      <g fill="#9db49a" stroke="none">
+        <path d="M22-28c-12-13-7-28 4-32 8 9 8 22-4 32z"/>
+        <path d="M36-12c14-7 25 2 26 14-11 4-23 0-26-14z"/>
+        <path d="M-32-4c-12-2-18-13-14-24 11-1 19 8 14 24z"/>
+      </g>
+    </g>
+    <path d="M22 20h48l-6 30H28z" fill="#d8c6b2" stroke="#b8a08a" stroke-width="2"/>
+  </g>
+
+  <!-- cozy light spots -->
+  <g fill="#fff1c9" opacity=".5" filter="url(#softR)">
+    <circle cx="652" cy="338" r="48"/>
+  </g>
+  <g fill="#fff" opacity=".6">
+    <circle cx="114" cy="452" r="2"/><circle cx="318" cy="407" r="1.7"/><circle cx="572" cy="449" r="2.2"/>
+  </g>
+</svg>
