@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="初雪街道上共围一条围巾的两个人">
+  <defs>
+    <linearGradient id="skySnow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#aeb6d6"/>
+      <stop offset=".45" stop-color="#d7c6d9"/>
+      <stop offset="1" stop-color="#f0dcdf"/>
+    </linearGradient>
+    <linearGradient id="snowG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f5f1f8"/>
+      <stop offset="1" stop-color="#e4dfef"/>
+    </linearGradient>
+    <linearGradient id="bldgSnow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7f7e9e"/>
+      <stop offset="1" stop-color="#5c5d7e"/>
+    </linearGradient>
+    <radialGradient id="lampSnow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fff0bd" stop-opacity=".95"/>
+      <stop offset=".45" stop-color="#ffe1a1" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#ffd999" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blurSnow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#skySnow)"/>
+  <g fill="#fff" opacity=".55">
+    <circle cx="111" cy="66" r="2"/><circle cx="184" cy="112" r="1.4"/><circle cx="274" cy="51" r="1.8"/>
+    <circle cx="367" cy="96" r="1.2"/><circle cx="458" cy="42" r="1.6"/><circle cx="542" cy="111" r="1.3"/>
+    <circle cx="637" cy="60" r="1.8"/><circle cx="727" cy="121" r="1.2"/><circle cx="763" cy="42" r="1.5"/>
+    <circle cx="61" cy="148" r="1.3"/><circle cx="321" cy="160" r="1.2"/><circle cx="694" cy="178" r="1.4"/>
+  </g>
+
+  <!-- distant buildings -->
+  <g>
+    <path d="M0 332h69v-78h67v78h48v-115h72v115h41v-61h55v61h50v-93h62v93h45v-73h60v73h52v-112h64v112h47v-64h58v64h50v212H0z" fill="url(#bldgSnow)" opacity=".8"/>
+    <path d="M0 332h69v-78h67v78h48v-115h72v115h41v-61h55v61h50v-93h62v93h45v-73h60v73h52v-112h64v112h47v-64h58v64h50v212H0z" fill="none" stroke="#9d9db7" stroke-width="1" opacity=".45"/>
+    <g fill="#f5e4b2" opacity=".8">
+      <rect x="21" y="281" width="10" height="14" rx="2"/><rect x="47" y="303" width="8" height="11" rx="2"/>
+      <rect x="101" y="276" width="11" height="15" rx="2"/><rect x="128" y="304" width="8" height="11" rx="2"/>
+      <rect x="207" y="249" width="12" height="16" rx="2"/><rect x="237" y="279" width="8" height="12" rx="2"/>
+      <rect x="315" y="292" width="10" height="14" rx="2"/><rect x="357" y="312" width="8" height="11" rx="2"/>
+      <rect x="420" y="268" width="11" height="15" rx="2"/><rect x="451" y="298" width="8" height="11" rx="2"/>
+      <rect x="528" y="281" width="12" height="16" rx="2"/><rect x="559" y="310" width="8" height="11" rx="2"/>
+      <rect x="644" y="259" width="11" height="15" rx="2"/><rect x="674" y="289" width="8" height="11" rx="2"/>
+      <rect x="747" y="299" width="9" height="12" rx="2"/>
+    </g>
+    <g fill="#f8eef1" opacity=".8">
+      <path d="M0 253c23-3 47-3 69 0v-8c-20-8-47-8-69 0zM184 216c20-4 44-4 64 0v-7c-19-7-44-7-64 0z"/>
+      <path d="M289 240c18-3 38-3 55 0v-7c-16-6-38-6-55 0zM477 218c19-4 39-4 60 0v-7c-18-6-40-6-60 0z"/>
+      <path d="M612 192c19-4 41-4 64 0v-8c-20-6-44-6-64 0zM735 211c17-3 37-3 58 0v-7c-18-5-39-5-58 0z"/>
+    </g>
+  </g>
+
+  <!-- street lamps -->
+  <g transform="translate(171 295)">
+    <path d="M0 0v177" stroke="#55526e" stroke-width="7" stroke-linecap="round"/>
+    <path d="M0 0c0-24 9-37 27-42" fill="none" stroke="#55526e" stroke-width="6" stroke-linecap="round"/>
+    <path d="M18-48h27l6 22H13z" fill="#f8e8bd" stroke="#55526e" stroke-width="3"/>
+    <circle cx="33" cy="-37" r="76" fill="url(#lampSnow)" opacity=".8" filter="url(#blurSnow)"/>
+    <circle cx="33" cy="-36" r="7" fill="#fff2c2"/>
+  </g>
+  <g transform="translate(637 320)">
+    <path d="M0 0v154" stroke="#55526e" stroke-width="6" stroke-linecap="round"/>
+    <path d="M0 0c0-20 8-31 23-35" fill="none" stroke="#55526e" stroke-width="5" stroke-linecap="round"/>
+    <path d="M15-40h23l5 19H11z" fill="#f8e8bd" stroke="#55526e" stroke-width="3"/>
+    <circle cx="28" cy="-31" r="64" fill="url(#lampSnow)" opacity=".75" filter="url(#blurSnow)"/>
+    <circle cx="28" cy="-30" r="6" fill="#fff2c2"/>
+  </g>
+
+  <!-- cafe storefront left -->
+  <g transform="translate(0 245)">
+    <path d="M0 0h165v205H0z" fill="#786b85" opacity=".75"/>
+    <path d="M13 25h139v124H13z" fill="#f4dca9" stroke="#5e5871" stroke-width="3"/>
+    <path d="M13 25h139v20H13z" fill="#c98d94"/>
+    <g stroke="#c9ad7f" stroke-width="2" opacity=".5">
+      <path d="M48 45v104M83 45v104M118 45v104"/>
+    </g>
+    <g fill="#fff4d6" opacity=".8">
+      <circle cx="32" cy="84" r="8"/><circle cx="68" cy="84" r="8"/><circle cx="103" cy="84" r="8"/><circle cx="137" cy="84" r="8"/>
+    </g>
+    <path d="M13 119h139" stroke="#a47774" stroke-width="3"/>
+    <path d="M25 149h112v22H25z" fill="#9c7c75"/>
+    <path d="M0 169h165v36H0z" fill="#6e586d"/>
+    <path d="M13 25c-7 0-12 5-12 12v3h151v-3c0-7-5-12-12-12z" fill="#f5e7d4" opacity=".9"/>
+    <path d="M26 197c0-13 9-22 22-22s22 9 22 22" fill="none" stroke="#4f475f" stroke-width="3"/>
+    <g fill="#e9d9c1">
+      <rect x="22" y="0" width="34" height="16" rx="2"/><rect x="62" y="0" width="52" height="16" rx="2"/><rect x="120" y="0" width="34" height="16" rx="2"/>
+    </g>
+  </g>
+
+  <!-- street / snow ground -->
+  <path d="M0 440c132-21 246-20 358 0 135 24 266 23 442-3v163H0z" fill="url(#snowG)"/>
+  <path d="M0 469c124-19 237-15 348 4 137 23 268 20 452-7v38c-158 23-279 22-408 2-136-21-253-26-392-4z" fill="#f8f5fb" opacity=".8"/>
+  <g fill="#ded6e9" opacity=".7">
+    <ellipse cx="92" cy="535" rx="53" ry="10"/><ellipse cx="697" cy="557" rx="62" ry="12"/>
+    <ellipse cx="315" cy="572" rx="39" ry="8"/><ellipse cx="575" cy="512" rx="31" ry="7"/>
+  </g>
+  <g fill="#c9c1da" opacity=".75">
+    <path d="M511 550c9-2 17-2 26 0 2 5-3 8-13 8s-15-3-13-8z"/>
+    <path d="M462 574c8-2 15-2 22 0 2 4-3 7-11 7s-13-3-11-7z"/>
+    <path d="M558 583c8-2 15-2 22 0 2 4-3 7-11 7s-13-3-11-7z"/>
+  </g>
+
+  <!-- couple with shared scarf -->
+  <g transform="translate(407 427)">
+    <ellipse cx="2" cy="134" rx="78" ry="16" fill="#b3aac4" opacity=".35"/>
+    <!-- girl -->
+    <path d="M-47 58c-17 16-25 42-24 76h80c0-28-8-52-24-70z" fill="#e9d5e8" stroke="#a48da9" stroke-width="2"/>
+    <path d="M-43 57c-9 8-15 22-18 39-2 10 3 17 11 17 7 0 11-6 13-16l3-23c2-10-2-17-9-17z" fill="#f7e4ee"/>
+    <path d="M18 57c9 8 15 22 18 39 2 10-3 17-11 17-7 0-11-6-13-16l-3-23c-2-10 2-17 9-17z" fill="#f7e4ee"/>
+    <path d="M-46 99l-6 35h22l5-35zM8 99l5 35h22l-6-35z" fill="#fdf8f3" stroke="#b7a1b7" stroke-width="2"/>
+    <path d="M-52 134h24c4 4 2 8-4 9h-16c-5-1-7-5-4-9zM15 134h24c4 4 2 8-4 9H19c-5-1-7-5-4-9z" fill="#a995b3"/>
+    <circle cx="-28" cy="9" r="27" fill="#f9e4ed" stroke="#a48da9" stroke-width="2"/>
+    <path d="M-55 9c-2-26 10-41 28-41 19 0 30 16 27 41-4-12-10-20-18-24-5 8-14 13-25 14-4 0-8 4-12 10z" fill="#c0a8dd"/>
+    <path d="M-56 17c-6 23-8 44-5 63M-1 17c6 23 8 44 5 63" fill="none" stroke="#c0a8dd" stroke-width="8" stroke-linecap="round"/>
+    <path d="M-34-9c-2 7 1 11 6 11 4 0 6-3 5-7" fill="none" stroke="#d9afc0" stroke-width="2"/>
+    <path d="M-55 48c-4 11 0 20 9 22" fill="none" stroke="#f7e4ee" stroke-width="7" stroke-linecap="round"/>
+    <!-- boy -->
+    <path d="M24 54c-14 12-22 34-22 58l1 22h70l-2-22c0-24-8-46-22-58z" fill="#d8e1ee" stroke="#8f9cb4" stroke-width="2"/>
+    <path d="M19 55c-8 7-14 19-17 33-2 9 2 15 9 16 7 1 11-5 13-14l3-20c2-9-1-15-8-15z" fill="#eef2f7"/>
+    <path d="M52 55c8 7 14 19 17 33 2 9-2 15-9 16-7 1-11-5-13-14l-3-20c-2-9 1-15 8-15z" fill="#eef2f7"/>
+    <path d="M27 101l-4 33h20l4-33zM54 101l4 33h20l-4-33z" fill="#fbfdfd" stroke="#a5aec2" stroke-width="2"/>
+    <path d="M21 134h24c4 4 2 8-4 9H25c-5-1-7-5-4-9zM59 134h24c3 4 1 8-5 9H63c-5-1-7-5-4-9z" fill="#9ba5b8"/>
+    <circle cx="41" cy="5" r="26" fill="#f9e4ed" stroke="#8f9cb4" stroke-width="2"/>
+    <path d="M15 4c-1-25 10-38 26-38 17 0 28 14 26 38-4-11-9-18-17-22-5 7-13 12-23 13-4 0-8 3-12 9z" fill="#aab4ca"/>
+    <path d="M14 13c-4 17-3 32 1 44M68 13c4 17 3 32-1 44" fill="none" stroke="#aab4ca" stroke-width="7" stroke-linecap="round"/>
+    <path d="M34-10c-1 6 2 10 6 10 4 0 6-3 5-7" fill="none" stroke="#d9afc0" stroke-width="2"/>
+    <!-- shared scarf -->
+    <path d="M-44 58c15 9 34 13 50 13 16 0 30-3 39-8 11 5 16 13 14 22-4 15-25 20-52 20-31 0-53-7-57-23-2-9 0-17 6-24z" fill="#f2b9c9" stroke="#cc8fa4" stroke-width="2.2"/>
+    <path d="M-8 71c2 13 7 25 15 35 7 8 17 5 14-6-3-12-12-23-22-31z" fill="#f5c8d4" stroke="#cc8fa4" stroke-width="2"/>
+    <path d="M-43 63c18 8 39 11 58 9M6 64c14 1 27-1 38-4" fill="none" stroke="#fbe1e7" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+    <!-- hands -->
+    <path d="M-8 91c7-2 14-1 20 2" fill="none" stroke="#f7e4ee" stroke-width="6" stroke-linecap="round"/>
+    <path d="M13 94c3 4 1 8-4 9-4 1-7-2-6-6" fill="none" stroke="#f7e4ee" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-51 66c-5 3-7 8-5 12 2 5 8 5 11 1" fill="none" stroke="#f5c8d4" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- snowflakes foreground -->
+  <g fill="#fff" opacity=".9">
+    <circle cx="83" cy="246" r="3"/><circle cx="218" cy="198" r="2.4"/><circle cx="309" cy="281" r="3.4"/>
+    <circle cx="396" cy="178" r="2"/><circle cx="482" cy="234" r="2.8"/><circle cx="591" cy="187" r="2.3"/>
+    <circle cx="708" cy="253" r="3.1"/><circle cx="756" cy="324" r="2.1"/><circle cx="129" cy="364" r="2.6"/>
+    <circle cx="261" cy="391" r="2"/><circle cx="345" cy="335" r="2.7"/><circle cx="471" cy="379" r="1.8"/>
+    <circle cx="545" cy="323" r="2.4"/><circle cx="672" cy="390" r="2"/><circle cx="38" cy="425" r="2.4"/>
+    <circle cx="610" cy="430" r="1.8"/><circle cx="730" cy="460" r="2.1"/><circle cx="190" cy="477" r="1.7"/>
+    <path d="M647 145l1.7 5.3 5.3 1.7-5.3 1.7-1.7 5.3-1.7-5.3-5.3-1.7 5.3-1.7z" opacity=".8"/>
+  </g>
+</svg>

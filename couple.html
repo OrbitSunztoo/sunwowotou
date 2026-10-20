@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>砂糖情侣 · 柚子 &amp; 星澈 | ふわり Fuwari</title>
+  <meta name="description" content="柚子与星澈的砂糖情侣小房间：拍立得合照墙、VRChat 角色卡、纪念日倒计时和一罐留言糖果。">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/couple.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <script>location.replace("index.html#couple");</script>
+</head>
+<body class="page-couple">
+  <a class="skip-link" href="#main">跳到正文</a>
+
+  <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4c-1.1-.9-8.4-6.1-8.4-11A4.8 4.8 0 0 1 12 6.2a4.8 4.8 0 0 1 8.4 3.2c0 4.9-7.3 10.1-8.4 11z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.7 15.7 21 21"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2.8l2.2 7 7 2.2-7 2.2-2.2 7-2.2-7-7-2.2 7-2.2z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3.1 2"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.7 6.3.8-4.6 4.4 1.2 6.2L12 17.2 6.4 20l1.2-6.2L3 9.5l6.3-.8z"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 20V5M5.6 11.4 12 5l6.4 6.4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.4" y="8.4" width="11.6" height="11.6" rx="3"/><path d="M15.6 8.4V6.6a2.6 2.6 0 0 0-2.6-2.6H6.6A2.6 2.6 0 0 0 4 6.6v6.4a2.6 2.6 0 0 0 2.6 2.6h1.8"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.6h3l1.5-2.4h7L17 8.6h3v10H4z"/><circle cx="12" cy="13.2" r="3.4"/></symbol>
+  </svg>
+
+  <div class="site-bg" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+    <span class="grain"></span>
+  </div>
+  <canvas class="particle-field" id="particleField" aria-hidden="true"></canvas>
+
+  <header class="site-nav" id="top">
+    <a class="brand" href="index.html#top" aria-label="ふわり 首页">
+      <img src="assets/img/logo.svg" alt="" width="44" height="44">
+      <span class="brand-text">ふわり<small>Fuwari</small></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="index.html#journal">手帐</a>
+      <a href="index.html#gallery">图集</a>
+      <a href="index.html#about">关于</a>
+      <a href="couple.html" class="nav-sweet is-active">砂糖情侣 <span class="nav-heart">♥</span></a>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="icon-btn" href="index.html#journal" aria-label="去手帐搜索文章">
+        <svg class="icon"><use href="#i-search"/></svg>
+      </a>
+      <a class="btn btn-nav" href="#messages">
+        <span class="btn-dot"></span> 留一颗糖
+      </a>
+      <button class="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="nav-scrim" id="navScrim" hidden></div>
+
+  <main id="main">
+    <!-- ================= COUPLE HERO ================= -->
+    <section class="couple-hero">
+      <div class="couple-deco" aria-hidden="true">
+        <span class="deco-heart dh-1">♥</span>
+        <span class="deco-heart dh-2">♥</span>
+        <span class="deco-heart dh-3">♥</span>
+        <span class="deco-star ds-1">✦</span>
+        <span class="deco-star ds-2">✧</span>
+        <span class="deco-candy dc-1"></span>
+        <span class="deco-candy dc-2"></span>
+        <span class="deco-ring"></span>
+      </div>
+
+      <div class="container couple-hero-inner">
+        <p class="script-line hero-script reveal">Yuzu &amp; Sei</p>
+        <p class="eyebrow reveal"><span class="eyebrow-dot"></span> SUGAR COUPLE · VRChat SWEETHEARTS</p>
+        <h1 class="reveal">砂糖<span class="title-outline">情侣</span><span class="title-heart" aria-hidden="true">♥</span></h1>
+        <p class="couple-lede reveal">在 VRChat 的星海里，找到一个想一起下线的人。<br>这里存着我们所有软乎乎的、甜而不腻的时刻。</p>
+        <p class="couple-since reveal"><span>一起走过</span><strong>2022.05.20 — forever</strong><span>第 1,613 天</span></p>
+
+        <div class="couple-stage">
+          <figure class="love-card love-a reveal">
+            <span class="love-tape" aria-hidden="true"></span>
+            <div class="love-photo">
+              <img src="assets/img/avatar-yuzu.svg" alt="柚子：淡紫色长发、贝雷帽的二次元头像">
+            </div>
+            <figcaption>
+              <strong>柚子</strong>
+              <span>Yuzu · 插画师 / 世界建造者</span>
+            </figcaption>
+            <span class="online-pill"><i></i> 在线</span>
+            <span class="love-id">@yuzu_mochi</span>
+          </figure>
+
+          <div class="love-bridge reveal" aria-hidden="true">
+            <span class="bridge-thread thread-a"></span>
+            <span class="bridge-thread thread-b"></span>
+            <span class="bridge-heart"><svg class="icon"><use href="#i-heart"/></svg></span>
+            <span class="bridge-label">05 · 20</span>
+            <span class="bridge-mini">since 2022</span>
+          </div>
+
+          <figure class="love-card love-b reveal">
+            <span class="love-tape" aria-hidden="true"></span>
+            <div class="love-photo">
+              <img src="assets/img/avatar-sei.svg" alt="星澈：银蓝色头发、薄荷卫衣的二次元头像">
+            </div>
+            <figcaption>
+              <strong>星澈</strong>
+              <span>Sei · 程序员 / 深夜露营者</span>
+            </figcaption>
+            <span class="online-pill away"><i></i> 挂机中</span>
+            <span class="love-id">@sei_star</span>
+          </figure>
+        </div>
+
+        <div class="together-timer reveal">
+          <span class="timer-deco timer-heart">♥</span>
+          <div class="timer-text">
+            <span class="mini-label">OUR LITTLE COUNT</span>
+            <p>我们已经在一起</p>
+          </div>
+          <div class="timer-main">
+            <strong id="daysTogether">1,613</strong>
+            <span>天</span>
+          </div>
+          <div class="timer-clock">
+            <span><b id="liveHours">00</b><i>时</i></span>
+            <span><b id="liveMins">00</b><i>分</i></span>
+            <span><b id="liveSecs">00</b><i>秒</i></span>
+          </div>
+          <p class="timer-note">实时计算 · 从 2022.05.20 20:00 开始</p>
+          <span class="timer-deco timer-spark">✦</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PHOTO WALL ================= -->
+    <section class="section photo-wall" id="wall">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> OUR LITTLE MUSEUM</p>
+            <h2>合照墙，与<span class="serif-accent">被留住的一秒</span></h2>
+          </div>
+          <p class="section-sub">有些瞬间在现实里只有一秒，在相纸上可以待很多年。</p>
+          <span class="section-note">8 张拍立得 · 都舍不得删</span>
+        </header>
+
+        <div class="polaroid-wall">
+          <figure class="polaroid rot-1">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-sakura.svg" alt="樱花坡道与鸟居下牵手的两人"></div>
+            <figcaption><span>第一次见面</span><em>2022.05.20 · 樱花坡道</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-2">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-fireworks.svg" alt="夏夜花火下并肩的两人"></div>
+            <figcaption><span>花火大会</span><em>2022.08.16 · 第二排，偷偷牵手</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-3">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-cafe.svg" alt="雨天咖啡馆的桌边"></div>
+            <figcaption><span>雨天咖啡馆</span><em>2023.09.12 · 一杯不加糖</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-4">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-camp.svg" alt="星海下的发光帐篷"></div>
+            <figcaption><span>星海露营</span><em>2025.09.28 · 帐篷里漏进一颗星</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-5">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-snow.svg" alt="初雪里共围一条围巾的两人"></div>
+            <figcaption><span>初雪</span><em>2022.12.24 · 一条围巾，两个人</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-6">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-birthday.svg" alt="生日蛋糕前一起吹蜡烛"></div>
+            <figcaption><span>生日房间</span><em>2026.05.20 · 蜡烛是 5 和 2</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-7">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-room.svg" alt="雨天里各做各事的房间"></div>
+            <figcaption><span>周末的房间</span><em>2026.09.06 · 各做各的事</em></figcaption>
+          </figure>
+          <figure class="polaroid rot-8">
+            <span class="p-tape" aria-hidden="true"></span>
+            <div class="p-photo"><img src="assets/img/scene-letter.svg" alt="夏日窗边写信的桌子"></div>
+            <figcaption><span>夏日慢信</span><em>2026.08.21 · 写给你的第 37 封</em></figcaption>
+          </figure>
+        </div>
+
+        <p class="wall-note"><span aria-hidden="true">✿</span> 相纸会泛黄，但那天的心动不会。</p>
+      </div>
+    </section>
+
+    <!-- ================= VRC PROFILES ================= -->
+    <section class="section profiles" id="profiles">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> VRChat CHARACTERS</p>
+            <h2>在另一个世界，<span class="serif-accent">我们是这样的人</span></h2>
+          </div>
+          <p class="section-sub">两副虚拟身体，装着两颗认真生活的心。</p>
+          <span class="section-note">VRChat · PC</span>
+        </header>
+
+        <div class="profile-grid">
+          <article class="vrc-card vrc-yuzu reveal">
+            <div class="vrc-cover">
+              <span class="vrc-plat"><i></i> VRChat</span>
+              <span class="vrc-world">ふわり星海 · 私人小屋</span>
+              <span class="vrc-cover-star cover-s1">✦</span>
+              <span class="vrc-cover-star cover-s2">✧</span>
+              <span class="vrc-cover-star cover-s3">✦</span>
+            </div>
+            <div class="vrc-head">
+              <div class="vrc-avatar"><img src="assets/img/avatar-yuzu.svg" alt="柚子 VRChat 头像"></div>
+              <div class="vrc-name">
+                <span class="vrc-status"><i></i> 在线 · 私密世界</span>
+                <h3>柚子 <small>Yuzu</small></h3>
+                <button class="vrc-handle" type="button" data-copy="Yuzu_mochi" title="复制 VRChat ID">
+                  @yuzu_mochi <svg class="icon"><use href="#i-copy"/></svg>
+                </button>
+              </div>
+            </div>
+            <p class="vrc-bio">「在搭一个有很多窗户的小世界。欢迎来坐，但进门记得脱鞋。」</p>
+            <dl class="vrc-info">
+              <div><dt>常用模型</dt><dd>柚子猫耳 ver.2</dd></div>
+              <div><dt>身高</dt><dd>1.52 m</dd></div>
+              <div><dt>喜欢的世界</dt><dd>樱花温泉 / 星海营地</dd></div>
+              <div><dt>上线时间</dt><dd>22:00 — 02:00</dd></div>
+            </dl>
+            <div class="vrc-tags"><span>拍照</span><span>世界建造</span><span>甜食</span><span>猫</span><span>慢节奏</span></div>
+            <div class="vrc-foot">
+              <button class="btn btn-primary btn-small" type="button" data-copy="Yuzu_mochi">加我好友 · 复制 ID</button>
+              <span class="vrc-mutual">与星澈 · 同居中</span>
+            </div>
+          </article>
+
+          <article class="vrc-card vrc-sei reveal">
+            <div class="vrc-cover">
+              <span class="vrc-plat"><i></i> VRChat</span>
+              <span class="vrc-world">星海营地 · 深夜场</span>
+              <span class="vrc-cover-star cover-s1">✦</span>
+              <span class="vrc-cover-star cover-s2">✧</span>
+              <span class="vrc-cover-star cover-s3">✦</span>
+            </div>
+            <div class="vrc-head">
+              <div class="vrc-avatar"><img src="assets/img/avatar-sei.svg" alt="星澈 VRChat 头像"></div>
+              <div class="vrc-name">
+                <span class="vrc-status away"><i></i> 挂机中 · 星海营地</span>
+                <h3>星澈 <small>Sei</small></h3>
+                <button class="vrc-handle" type="button" data-copy="Sei_starfall" title="复制 VRChat ID">
+                  @sei_starfall <svg class="icon"><use href="#i-copy"/></svg>
+                </button>
+              </div>
+            </div>
+            <p class="vrc-bio">「负责在深夜说『再玩五分钟』。现实里写代码，VRChat 里搭帐篷。」</p>
+            <dl class="vrc-info">
+              <div><dt>常用模型</dt><dd>星澈 · 夜航 ver.</dd></div>
+              <div><dt>身高</dt><dd>1.78 m</dd></div>
+              <div><dt>喜欢的世界</dt><dd>星海营地 / 旧书店</dd></div>
+              <div><dt>上线时间</dt><dd>23:00 — 03:00</dd></div>
+            </dl>
+            <div class="vrc-tags"><span>吉他</span><span>摄影</span><span>夜猫</span><span>热可可</span><span>搭帐篷</span></div>
+            <div class="vrc-foot">
+              <button class="btn btn-primary btn-small" type="button" data-copy="Sei_starfall">加我好友 · 复制 ID</button>
+              <span class="vrc-mutual">与柚子 · 同居中</span>
+            </div>
+          </article>
+        </div>
+
+        <p class="profile-note">
+          <span class="note-pin" aria-hidden="true"></span>
+          我们常驻的世界叫 <strong>「ふわり星海」</strong>，是一个有玻璃温室、旧书店和一片会下樱花雨的营地的小世界。
+          如果你在深夜路过，欢迎进来烤火。
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= ANNIVERSARY ================= -->
+    <section class="section anniversary" id="versary">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> OUR ANNIVERSARIES</p>
+            <h2>把普通日子，<span class="serif-accent">过成纪念日</span></h2>
+          </div>
+          <p class="section-sub">5 月 20 日是起点，但想庆祝的日子远不止这一天。</p>
+          <span class="section-note">下一个纪念日 · 2027.05.20</span>
+        </header>
+
+        <div class="versary-grid">
+          <div class="countdown-card reveal">
+            <span class="countdown-orbit orbit-a" aria-hidden="true"></span>
+            <span class="countdown-orbit orbit-b" aria-hidden="true"></span>
+            <span class="countdown-star cs-1" aria-hidden="true">✦</span>
+            <span class="countdown-star cs-2" aria-hidden="true">✧</span>
+            <p class="eyebrow light"><span class="eyebrow-dot"></span> NEXT ANNIVERSARY</p>
+            <h3>距离第 <span id="versaryNo">6</span> 个 5·20</h3>
+            <div class="countdown" aria-label="纪念日倒计时">
+              <div><strong id="cdDays">—</strong><span>天</span></div>
+              <div><strong id="cdHours">—</strong><span>时</span></div>
+              <div><strong id="cdMins">—</strong><span>分</span></div>
+              <div><strong id="cdSecs">—</strong><span>秒</span></div>
+            </div>
+            <p class="countdown-wish">2027.05.20 · 想和你去看一次海，<br>然后拍一张不用滤镜的合照。</p>
+            <div class="year-progress">
+              <span class="progress-track"><i id="yearProgress"></i></span>
+              <small>这一年，我们已经一起走了 <b id="yearPercent">34%</b></small>
+            </div>
+            <div class="countdown-cake" aria-hidden="true">
+              <span class="cake-candle"></span>
+              <span class="cake-top"></span>
+              <span class="cake-body"></span>
+            </div>
+          </div>
+
+          <div class="timeline reveal">
+            <div class="timeline-head">
+              <h3>我们的小时间线</h3>
+              <span class="timeline-script">chapter 01 — 05</span>
+            </div>
+            <ol class="timeline-list">
+              <li>
+                <span class="t-date">2022.05.20</span>
+                <span class="t-dot" aria-hidden="true"></span>
+                <div class="t-body"><h4>樱花世界的第一次相遇</h4><p>你在鸟居下「迷路」，我假装也迷路。其实那天我绕了三圈。</p></div>
+              </li>
+              <li>
+                <span class="t-date">2022.08.16</span>
+                <span class="t-dot" aria-hidden="true"></span>
+                <div class="t-body"><h4>第一次一起看花火</h4><p>你说花火很吵，但一整晚都没有松开手。</p></div>
+              </li>
+              <li>
+                <span class="t-date">2022.12.24</span>
+                <span class="t-dot" aria-hidden="true"></span>
+                <div class="t-body"><h4>初雪，与同一条围巾</h4><p>现实里第一次见面，比模型还紧张。你把围巾分我一半。</p></div>
+              </li>
+              <li>
+                <span class="t-date">2024.08.02</span>
+                <span class="t-dot" aria-hidden="true"></span>
+                <div class="t-body"><h4>搬进有小窗户的家</h4><p>一只猫、六盆绿植、两副碗筷，和永远抢不到的靠窗位。</p></div>
+              </li>
+              <li>
+                <span class="t-date">2026.05.20</span>
+                <span class="t-dot" aria-hidden="true"></span>
+                <div class="t-body"><h4>第五年，把「以后」又说了一遍</h4><p>蛋糕上的蜡烛是 5 和 2。愿望和第一年一样。</p></div>
+              </li>
+            </ol>
+            <p class="timeline-foot"><span aria-hidden="true">♥</span> 未完待续，下一章还在写。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MESSAGES ================= -->
+    <section class="section messages" id="messages">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> MESSAGE CANDY JAR</p>
+            <h2>留言糖果罐，<span class="serif-accent">欢迎投喂</span></h2>
+          </div>
+          <p class="section-sub">写一点甜的、酸的、或者只是今天想说的话。我们会一颗一颗读完。</p>
+          <span class="section-note">已收集 <b id="noteCountTop">0</b> 颗糖</span>
+        </header>
+
+        <div class="message-layout">
+          <form class="message-form reveal" id="messageForm" novalidate>
+            <div class="jar" aria-hidden="true">
+              <span class="jar-lid"></span>
+              <span class="jar-glass">
+                <i class="jar-candy jc-1"></i><i class="jar-candy jc-2"></i><i class="jar-candy jc-3"></i>
+                <i class="jar-candy jc-4"></i><i class="jar-candy jc-5"></i><i class="jar-heart">♥</i>
+              </span>
+              <span class="jar-label">sugar<br>jar</span>
+            </div>
+            <h3>往糖果罐里放一颗糖</h3>
+            <p class="form-lede">不用登录，也不会被公开到别处。<br>它会安安静静待在这只罐子里。</p>
+
+            <label class="field">
+              <span>你的名字</span>
+              <input type="text" name="name" maxlength="16" placeholder="怎么称呼你？" required>
+            </label>
+            <label class="field">
+              <span>想说的话</span>
+              <textarea name="text" maxlength="140" rows="4" placeholder="写一点甜甜的、或者只是今天想说的话…" required></textarea>
+            </label>
+
+            <fieldset class="candy-colors">
+              <legend>选一颗糖</legend>
+              <label><input type="radio" name="color" value="pink" checked><span class="candy-dot pink"></span><em>草莓</em></label>
+              <label><input type="radio" name="color" value="lav"><span class="candy-dot lav"></span><em>薰衣草</em></label>
+              <label><input type="radio" name="color" value="mint"><span class="candy-dot mint"></span><em>薄荷</em></label>
+              <label><input type="radio" name="color" value="cream"><span class="candy-dot cream"></span><em>牛奶</em></label>
+            </fieldset>
+
+            <div class="form-foot">
+              <span class="char-count"><b id="charCount">0</b> / 140</span>
+              <button class="btn btn-primary" type="submit">
+                放进糖果罐 <svg class="icon"><use href="#i-heart"/></svg>
+              </button>
+            </div>
+            <p class="form-note">留言保存在你的浏览器里，像一颗只属于你的糖。</p>
+          </form>
+
+          <div class="notes-wrap">
+            <div class="notes-head">
+              <h3>罐子里现在有 <b id="noteCount">0</b> 颗糖</h3>
+              <button class="text-link small" type="button" id="resetNotes">恢复初始糖果</button>
+            </div>
+            <div class="notes-grid" id="notesGrid"></div>
+            <div class="notes-empty" id="notesEmpty" hidden>
+              <span aria-hidden="true">✿</span>
+              <p>罐子空空的，等你放第一颗糖。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer couple-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand brand-footer" href="index.html">
+          <img src="assets/img/logo.svg" alt="" width="46" height="46">
+          <span class="brand-text">ふわり<small>Fuwari</small></span>
+        </a>
+        <p>柚子 &amp; 星澈的砂糖情侣小房间。<br>甜而不腻，慢慢更新。</p>
+        <p class="footer-script">together is my favorite place ♥</p>
+      </div>
+      <div class="footer-col">
+        <h3>在这个小房间</h3>
+        <a href="#wall">合照墙</a>
+        <a href="#profiles">角色资料</a>
+        <a href="#versary">纪念日</a>
+        <a href="#messages">留言糖果罐</a>
+      </div>
+      <div class="footer-col">
+        <h3>回到博客</h3>
+        <a href="index.html">博客首页</a>
+        <a href="index.html#journal">最近手帐</a>
+        <a href="index.html#gallery">图集</a>
+        <a href="index.html#about">关于柚子</a>
+      </div>
+      <div class="footer-col footer-note">
+        <h3>今日小纸条</h3>
+        <p>「世界很大，<br>但我想待在有你的那一格。」</p>
+        <span class="footer-date">05 · 20 · ALWAYS</span>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 ふわり Fuwari · 砂糖情侣篇</span>
+      <a class="to-top" href="#top">回到顶部 <svg class="icon"><use href="#i-up"/></svg></a>
+    </div>
+  </footer>
+
+  <button class="back-top" type="button" data-back-top aria-label="回到顶部">
+    <svg class="icon"><use href="#i-up"/></svg>
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/couple.js" defer></script>
+</body>
+</html>
