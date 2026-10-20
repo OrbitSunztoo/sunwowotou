@@ -512,6 +512,15 @@ button.text-link.small { border-bottom-style: dashed; }
 }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
+/* ---------- 静态托管（GitHub Pages 等）提示 ---------- */
+body.is-static .static-tip {
+  display: block;
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+
 /* ---------- 内容加载中 ---------- */
 body.is-loading .post-grid,
 body.is-loading .gallery-grid,

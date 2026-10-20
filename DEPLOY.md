@@ -295,7 +295,7 @@ sudo systemctl restart fuwari
 
 ## 10. 只想放静态页（不做后台）
 
-如果你的服务器只能放静态文件（GitHub Pages、对象存储、宝塔静态站点），前台已经支持只读模式：
+如果你的服务器只能放静态文件（GitHub Pages、对象存储、宝塔静态站点），**不用改任何配置**，前台会自己发现没有 `/api/content` 然后改读站点根目录的 `content.json`：
 
 1. 在本地跑一次 `npm start`，打开后台把内容改好，然后访问 <http://127.0.0.1:8787/api/backup> 下载 `content.json`；
 2. 上传这些文件到网站根目录：
@@ -307,23 +307,16 @@ uploads/          ← 后台传过的图片，路径要和 content.json 里一�
 content.json      ← 第 1 步下载的文件
 ```
 
-3. 把 `index.html` 里这一行
+3. 打开站点即可：文章、图集、合照墙、角色卡、纪念日全部正常读取，`body` 会带上 `is-static` 标记。
 
-```html
-<!--FUWARI:CONFIG-->
-```
-
-替换成
+**静态模式的留言**：没有服务端，所以留言、点赞保存在浏览器 localStorage 里（只对当前设备可见，提交时会提示“糖先放进本地罐子啦”）。
+想显式指定数据文件位置，也可以在 `index.html` 里把 `<!--FUWARI:CONFIG-->` 换成：
 
 ```html
 <script>window.FUWARI_CONFIG = { apiBase: "", dataUrl: "./content.json" };</script>
 ```
 
-刷新即可：文章、图集、合照墙、角色卡、纪念日全部正常读取，浏览器控制台无报错。
-（`dataUrl` 也可以指向 `./data/content.json`，看你把它放哪儿。）
-
-**静态模式的限制**：没有服务端，所以「留言提交」和「点赞」会提示“这个站点是静态托管的，留言暂时没法保存哦”，留言列表本身照常展示。
-等哪天换成 VPS，删掉那行 `dataUrl` 配置、把 `data/content.json` 一并传上去，留言功能就自动恢复（接口路径 `/api/content` 无需改代码）。
+以后换成 VPS，把 `data/content.json`（或根目录 `content.json`）一并传上去、跑 `npm start`，留言就自动回到服务端保存，接口路径无需改代码。
 
 > 如果图片在子目录部署时 404，说明 `content.json` 里存的是 `/uploads/...` 这类以斜杠开头的绝对路径。
 > 用 `node server/migrate-static.js 旧的content.json` 跑一遍，会写成 `uploads/...` 的相对路径（原文件自动备份）。

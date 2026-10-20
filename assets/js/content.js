@@ -16,6 +16,10 @@
   const BASE = String(config.apiBase || "").replace(/\/+$/, "");
   // 纯静态托管时，配 dataUrl 指向一个 content.json（例如 "./content.json" 或 "../data/content.json"）
   const DATA_URL = String(config.dataUrl || "").trim();
+  // 静态只读模式：没有后端时用 localStorage 记留言和点赞，刷新后还在
+  let staticMode = config.staticFallback === true || Boolean(DATA_URL);
+  const STATIC = () => staticMode;
+  const LOCAL_NOTES_KEY = "fuwari-static-notes-v1";
 
   const $ = (sel, scope = document) => scope.querySelector(sel);
   const $$ = (sel, scope = document) => Array.from(scope.querySelectorAll(sel));
@@ -467,9 +471,51 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch (error) {
-      if (!DATA_URL && url.startsWith("http")) return jsonp(url);
+      if (!DATA_URL && url.startsWith("http")) {
+        try {
+          return await jsonp(url);
+        } catch (jsonpError) {
+          throw jsonpError;
+        }
+      }
+      // 纯静态托管（GitHub Pages 等）没有 /api：文件就放在 ./content.json
+      if (!DATA_URL && !STATIC()) {
+        try {
+          const res = await fetch("./content.json", { credentials: "omit", cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          staticMode = true;
+          return await res.json();
+        } catch (staticError) {
+          throw error;
+        }
+      }
       throw error;
     }
+  }
+
+  function readLocalNotes() {
+    try {
+      const raw = localStorage.getItem(LOCAL_NOTES_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeLocalNotes(list) {
+    try {
+      localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(list.slice(0, 60)));
+    } catch (error) {
+      /* 隐私模式等写入失败时忽略 */
+    }
+  }
+
+  function withLocalNotes(content) {
+    if (!STATIC() || !content) return content;
+    const local = readLocalNotes();
+    if (!local.length) return content;
+    return { ...content, notes: local.concat(content.notes || []) };
   }
 
   function render(content, root) {
@@ -501,9 +547,11 @@
       document.dispatchEvent(new CustomEvent("fuwari:error", { detail: { error } }));
       return null;
     }
+    content = withLocalNotes(content);
     currentContent = content;
     render(content, document);
     document.body.classList.remove("is-loading", "is-offline");
+    document.body.classList.toggle("is-static", STATIC());
     document.dispatchEvent(new CustomEvent(options.silent ? "fuwari:update" : "fuwari:ready", { detail: { content } }));
     return content;
   }
@@ -536,7 +584,8 @@
         credentials: "same-origin",
         headers: options.body ? { "Content-Type": "application/json" } : {},
         ...options
-      });      let data = null;
+      });
+      let data = null;
       try {
         data = await res.json();
       } catch (error) {
@@ -549,26 +598,55 @@
       }
       return data;
     },
-    // 纯静态托管（config.dataUrl）时没有后端，留言无法保存，这里给出可读的错误
+
+    isStatic: () => STATIC(),
+
+    /* ---- 静态只读模式：留言与点赞存在 localStorage，刷新后还在，但只对当前浏览器可见 ---- */
+
     async postNote(input) {
-      const payload = { name: input.name, text: input.text, color: input.color };
-      const body = JSON.stringify(payload);
-      if (DATA_URL) {
-        const err = new Error("这个站点是静态托管的，留言暂时没法保存哦");
-        err.status = 501;
+      const payload = {
+        name: String(input.name || "").trim(),
+        text: String(input.text || "").trim(),
+        color: input.color || "pink"
+      };
+      if (!payload.text) {
+        const err = new Error("写一点什么再放进来吧。");
+        err.status = 400;
         throw err;
       }
-      return this.api("/notes", { method: "POST", body });
+      if (STATIC()) {
+        const note = {
+          id: `local-${Date.now().toString(36)}`,
+          name: payload.name || "路过的糖纸",
+          text: payload.text,
+          color: payload.color,
+          date: new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\//g, "."),
+          likes: 0,
+          local: true
+        };
+        const list = readLocalNotes();
+        list.unshift(note);
+        writeLocalNotes(list);
+        return { note, local: true };
+      }
+      return this.api("/notes", { method: "POST", body: JSON.stringify(payload) });
     },
 
     async likeNote(id, delta) {
-      if (DATA_URL) {
-        const err = new Error("这个站点是静态托管的，点赞暂时没法保存哦");
-        err.status = 501;
-        throw err;
+      if (STATIC()) {
+        const list = readLocalNotes();
+        const found = list.find((item) => item.id === id);
+        if (found) {
+          found.likes = Math.max(0, Number(found.likes || 0) + delta);
+          writeLocalNotes(list);
+        }
+        return { id, likes: found ? found.likes : 0, local: true };
       }
       return this.api("/notes/like", { method: "POST", body: JSON.stringify({ id, delta }) });
     },
+
+    // 渲染时把本地留言拼到前台留言列表最前面
+    withLocalNotes: (content) => withLocalNotes(content),
 
     asset(url) {
       const text = String(url || "");

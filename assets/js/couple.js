@@ -313,7 +313,11 @@
         form.reset();
         if (charCount) charCount.textContent = "0";
         shakeJar();
-        window.fuwariToast?.("糖已经放进罐子里啦，谢谢你 ♥");
+        if (api.isStatic && api.isStatic()) {
+          window.fuwariToast?.("糖先放进本地罐子啦（静态托管，只对这台设备可见）♥");
+        } else {
+          window.fuwariToast?.("糖已经放进罐子里啦，谢谢你 ♥");
+        }
       } catch (error) {
         window.fuwariToast?.(error.message || "这颗糖没能放进去，稍后再试一次吧。");
       } finally {

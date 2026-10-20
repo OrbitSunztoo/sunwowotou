@@ -14,6 +14,18 @@
   <link rel="stylesheet" href="assets/css/couple.css">
   <link rel="stylesheet" href="assets/css/responsive.css">
   <!--FUWARI:CONFIG-->
+  <script>
+    /* 纯静态托管（GitHub Pages / 对象存储）时自动切换为只读模式：
+       同源 /api/content 不存在就改读 ./content.json；staticFallback 用来把留言/点赞切到本地保存。 */
+    (function () {
+      var cfg = (window.FUWARI_CONFIG = window.FUWARI_CONFIG || {});
+      if (!("apiBase" in cfg)) cfg.apiBase = "";
+      if (location.protocol === "file:") {
+        cfg.dataUrl = cfg.dataUrl || "data/content.json";
+        cfg.staticFallback = true;
+      }
+    })();
+  </script>
 </head>
 <body class="page-home page-couple is-loading">
   <a class="skip-link" href="#main">跳到正文</a>
