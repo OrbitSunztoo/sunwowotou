@@ -11,7 +11,7 @@
     "heroTitleTop": "把日常，",
     "heroTitleBottom": "过成一颗糖。",
     "lede": "这里是sun的慢速手帐。记录窗边四点的光、VRChat 的星海，还有一个叫窝窝头的人。",
-    "heroImage": "uploads/1792474780682-b6d89270.png",
+    "heroImage": "uploads/1792474780682-b6d89270.webp",
     "heroCaption": "「 窗边的下午四点 」",
     "moodLabel": "今日心情",
     "moodWord": "晴转草莓",
@@ -41,7 +41,7 @@
     "name": "太阳",
     "latin": "sun",
     "roles": "是姐姐的爱人",
-    "avatar": "uploads/1792474706109-cfd722f7.jpg",
+    "avatar": "uploads/1792474706109-cfd722f7.webp",
     "alt": "跟姐姐",
     "handle": "@sun",
     "vrcId": "暂不展示",
@@ -108,7 +108,7 @@
     "name": "窝窝头",
     "latin": "wowotou",
     "roles": "是宝宝的爱人",
-    "avatar": "uploads/1792474712668-82e8f5a2.jpg",
+    "avatar": "uploads/1792474712668-82e8f5a2.webp",
     "alt": "银蓝色头发、薄荷卫衣的二次元头像",
     "handle": "@窝窝头",
     "vrcId": "暂不展示",
@@ -163,7 +163,7 @@
       "tag": "日常",
       "date": "2026-10-12",
       "read": "6 分钟",
-      "image": "uploads/1792473647644-fb07b81c.png",
+      "image": "uploads/1792473647644-fb07b81c.webp",
       "alt": "雨天咖啡馆里的两杯桂花拿铁",
       "excerpt": "下雨的下午，我们躲进街角咖啡馆。你把奶泡推到我面前，说这一杯有桂花的味道，也有点像去年秋天。",
       "body": [
@@ -207,7 +207,7 @@
       "tag": "VRChat",
       "date": "2026-09-28",
       "read": "5 分钟",
-      "image": "uploads/1792474075429-ebb31592.png",
+      "image": "uploads/1792474075429-ebb31592.webp",
       "alt": "星海露营的发光帐篷和篝火",
       "excerpt": "帐篷是薄荷绿的，篝火噼啪响。你说下线之前，再看一次流星吧。",
       "body": [
@@ -251,7 +251,7 @@
       "tag": "家居",
       "date": "2026-09-06",
       "read": "4 分钟",
-      "image": "uploads/1792474091774-22264bff.png",
+      "image": "uploads/1792474091774-22264bff.webp",
       "alt": "雨天房间里亮着暖灯的书桌",
       "excerpt": "把台灯调暗一点，让雨声先进来。房间和我，都在慢慢变软。",
       "body": [
@@ -291,7 +291,7 @@
       "tag": "随想",
       "date": "2026-08-21",
       "read": "3 分钟",
-      "image": "uploads/1792474118117-28894abd.png",
+      "image": "uploads/1792474118117-28894abd.webp",
       "alt": "夏日窗边写信的桌面",
       "excerpt": "等蝉声停下来，再把这封信寄出去。",
       "body": [
@@ -370,7 +370,7 @@
   "gallery": [
     {
       "id": "pic-mv-887907",
-      "image": "uploads/1792473647644-fb07b81c.png",
+      "image": "uploads/1792473647644-fb07b81c.webp",
       "alt": "爱心",
       "title": "第一次遇见，的mv",
       "date": "想靠近你",
@@ -379,7 +379,7 @@
     },
     {
       "id": "pic-6d118b",
-      "image": "uploads/1792473697146-5a7f30f8.png",
+      "image": "uploads/1792473697146-5a7f30f8.webp",
       "alt": "爱你",
       "title": "与你的第一个拍的照片",
       "date": "有点急切",
@@ -388,7 +388,7 @@
     },
     {
       "id": "pic-c8dba7",
-      "image": "uploads/1792473797289-dd40a2f0.png",
+      "image": "uploads/1792473797289-dd40a2f0.webp",
       "alt": "爱你",
       "title": "贴贴宝宝",
       "date": "",
@@ -397,7 +397,7 @@
     },
     {
       "id": "pic-ffe6bb",
-      "image": "uploads/1792473832299-9355d775.png",
+      "image": "uploads/1792473832299-9355d775.webp",
       "alt": "爱你",
       "title": "上面是对你的心动值",
       "date": "100偶",
@@ -408,28 +408,28 @@
   "wall": [
     {
       "id": "wall-e8bf3b",
-      "image": "uploads/1792474162772-6e436a4c.png",
+      "image": "uploads/1792474162772-6e436a4c.webp",
       "alt": "",
       "title": "",
       "caption": ""
     },
     {
       "id": "wall-3705fa",
-      "image": "uploads/1792474173769-b6e51049.png",
+      "image": "uploads/1792474173769-b6e51049.webp",
       "alt": "",
       "title": "",
       "caption": ""
     },
     {
       "id": "wall-afb13e",
-      "image": "uploads/1792474184287-82f88b6c.png",
+      "image": "uploads/1792474184287-82f88b6c.webp",
       "alt": "",
       "title": "",
       "caption": ""
     },
     {
       "id": "wall-9f7ede",
-      "image": "uploads/1792474197835-132cae95.png",
+      "image": "uploads/1792474197835-132cae95.webp",
       "alt": "",
       "title": "",
       "caption": ""
