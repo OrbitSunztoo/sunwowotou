@@ -99,6 +99,8 @@ npm start
 3. **进后台**用 `https://你的用户名.github.io/仓库名/public/admin.html`（发布时整个仓库都会上 Pages，后台在 `public/` 里）。
    也可以临时在地址后面加 `?api=https://你的服务器域名`，不用改文件也能连。
 
+> 注意：如果服务器还没配 HTTPS，Chrome / Edge / Safari 会拦掉「HTTPS 页面请求 HTTP 接口」（混合内容 + 本地网络访问限制），表现就是后台登录后一直转圈、首页也不显示数据。所以服务器务必按 DEPLOY.md 配好证书；配好之前只能用 `http://你的域名/` 或本地 `npm start` 打开后台。
+
 > 不想折腾服务器也行：不配 `api-config.js` 时 Pages 会进入**只读模式**，数据来自仓库里的 `content.json`，留言只能存本机浏览器。想更新文章就本地 `npm start` 改完，用 <http://127.0.0.1:8787/api/backup> 下载最新的 `content.json`，连同 `uploads/` 里的图片一起推上去。
 
 ---
