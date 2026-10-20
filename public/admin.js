@@ -57,7 +57,8 @@
   /* ---------------- 请求 ---------------- */
 
   // 跨域连服务器时必须带 Cookie，否则登录状态存不住
-  const CREDENTIALS = API_PARAM ? "include" : "same-origin";
+  let CREDENTIALS = API_PARAM ? "include" : "same-origin";
+  let LOCAL_MODE = false;
 
   /** 读取发布时生成的 api-config.js（形如 window.FUWARI_API = "https://xxx"） */
   function loadBackendConfig() {
@@ -205,6 +206,63 @@
     markClean();
   }
 
+  /* ---------------- 本机模式（没有后端时只改当前浏览器） ---------------- */
+
+  const LOCAL_CONTENT_KEY = "fuwari-local-content-v1";
+
+  function readLocalContent() {
+    try {
+      const raw = localStorage.getItem(LOCAL_CONTENT_KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      return data && typeof data === "object" ? data : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeLocalContent(next) {
+    try {
+      localStorage.setItem(LOCAL_CONTENT_KEY, JSON.stringify(next));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /** 静态托管时用的兜底数据：前台目录里的 content.json */
+  async function loadStaticContent() {
+    const candidates = ["../content.json", "./content.json"];
+    for (const url of candidates) {
+      try {
+        const res = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) continue;
+        const type = String(res.headers.get("content-type") || "");
+        if (type && !/json/i.test(type)) continue;
+        return await res.json();
+      } catch (error) {
+        /* 换下一个候选地址 */
+      }
+    }
+    throw new Error("找不到 content.json，无法进入本机编辑模式");
+  }
+
+  async function startLocalMode() {
+    LOCAL_MODE = true;
+    CREDENTIALS = "same-origin";
+    API = "/api";
+    $("#staticNotice").classList.add("hidden");
+    $("#localBar").hidden = false;
+    showSiteLink();
+    try {
+      setContent(readLocalContent() || (await loadStaticContent()));
+      showApp();
+      if (readLocalContent()) toast("已经把本机保存的内容读出来啦 ✿", "ok");
+    } catch (error) {
+      showStaticNotice();
+      toast(error.message, "error");
+    }
+  }
+
   /* ---------------- 登录 ---------------- */
 
   async function boot() {
@@ -225,7 +283,7 @@
           new Promise((resolve) => setTimeout(() => resolve(false), 4000))
         ]);
         if (!reachable) {
-          showStaticNotice();
+          await startLocalMode();
           return;
         }
       }
@@ -316,6 +374,10 @@
   });
 
   async function loadContent() {
+    if (LOCAL_MODE) {
+      setContent(readLocalContent() || (await loadStaticContent()));
+      return;
+    }
     setContent(await api("/content"));
   }
 
@@ -327,12 +389,23 @@
     button.disabled = true;
     button.textContent = "保存中…";
     try {
-      await api("/content", { method: "PUT", body: JSON.stringify(content) });
-      // 重新读一次，拿到服务端整理后的 id 与更新时间
-      await loadContent();
-      renderAll();
-      renderTab(currentTab);
-      toast("保存好啦，前台已经更新 ✿", "ok");
+      if (LOCAL_MODE) {
+        // 本机模式：存到浏览器里，前台刷新即可看到
+        const body = clone(content);
+        body.updatedAt = new Date().toISOString();
+        if (!writeLocalContent(body)) throw new Error("浏览器存储写不进去（可能是隐私模式），先用「导出 content.json」保存一份");
+        setContent(body);
+        renderAll();
+        renderTab(currentTab);
+        toast("已经存到这台浏览器啦，刷新前台就能看到 ✿（想给别人看请导出后上传到服务器）", "ok");
+      } else {
+        await api("/content", { method: "PUT", body: JSON.stringify(content) });
+        // 重新读一次，拿到服务端整理后的 id 与更新时间
+        await loadContent();
+        renderAll();
+        renderTab(currentTab);
+        toast("保存好啦，前台已经更新 ✿", "ok");
+      }
     } catch (error) {
       toast(error.message, "error");
     } finally {
@@ -689,6 +762,10 @@
   }
 
   async function uploadFiles(files) {
+    if (LOCAL_MODE) {
+      toast("本机模式不能上传图片——先在上面「图片库」里挑一张，或者部署服务器后再传 ✿", "error");
+      return;
+    }
     for (const file of files) {
       if (!file.type.startsWith("image/")) {
         toast(`${file.name} 不是图片`, "error");
@@ -1321,6 +1398,7 @@
   /* ---------------- 账号 / 备份 ---------------- */
 
   $("#accSave").addEventListener("click", async () => {
+    if (LOCAL_MODE) return toast("本机模式下没有服务器账号可改，部署到服务器后再来设置", "error");
     const current = $("#accCurrent").value;
     const next = $("#accNext").value;
     const next2 = $("#accNext2").value;
@@ -1339,7 +1417,27 @@
     }
   });
 
+  function downloadJSON(data, name) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // 本机模式：导出成 content.json，可以直接替换仓库 / 服务器上的同名文件
+  $("#localExport").addEventListener("click", () => {
+    if (!content) return;
+    downloadJSON(content, "content.json");
+    toast("已导出 content.json，替换站点根目录的同名文件即可发布", "ok");
+  });
+
   $("#backupBtn").addEventListener("click", async () => {
+    if (LOCAL_MODE) {
+      if (content) downloadJSON(content, `fuwari-backup-${todayISO()}.json`);
+      return;
+    }
     try {
       const data = await api("/backup");
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -1362,7 +1460,11 @@
       const data = JSON.parse(await file.text());
       if (!data || !data.owner || !data.articles) throw new Error("这个文件看起来不是ふわり的备份");
       if (!confirm("用这个备份替换现在的全部内容？")) return;
-      await api("/content", { method: "PUT", body: JSON.stringify(data) });
+      if (LOCAL_MODE) {
+        if (!writeLocalContent(data)) throw new Error("浏览器存储写不进去，换一个浏览器试试");
+      } else {
+        await api("/content", { method: "PUT", body: JSON.stringify(data) });
+      }
       await loadContent();
       renderAll();
       renderTab(currentTab);

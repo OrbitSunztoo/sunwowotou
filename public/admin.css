@@ -264,6 +264,23 @@ a { color: var(--lav-dark); }
   min-width: 0;
 }
 
+.local-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px dashed rgba(185, 168, 227, .6);
+  background: linear-gradient(135deg, rgba(249, 240, 255, .95), rgba(255, 244, 248, .9));
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.local-bar b { color: var(--lav-dark); }
+.local-bar .btn { margin-left: auto; }
+
 .topbar {
   display: flex;
   align-items: center;

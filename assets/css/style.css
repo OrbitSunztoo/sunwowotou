@@ -1611,6 +1611,15 @@ body.is-loading .notes-grid::after {
   transition: color .25s var(--ease), padding-left .25s var(--ease);
 }
 .footer-col a:hover { color: #fff; padding-left: 4px; }
+.footer-col .footer-admin {
+  justify-content: flex-start;
+  margin-top: 6px;
+  border-bottom: 0;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: rgba(253, 248, 241, .34);
+}
+.footer-col .footer-admin:hover { color: rgba(253, 248, 241, .8); padding-left: 2px; }
 .footer-col a em {
   font-style: normal;
   font-family: var(--font-round);

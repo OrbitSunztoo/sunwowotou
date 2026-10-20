@@ -20,6 +20,7 @@
   let staticMode = config.staticFallback === true || Boolean(DATA_URL);
   const STATIC = () => staticMode;
   const LOCAL_NOTES_KEY = "fuwari-static-notes-v1";
+  const LOCAL_CONTENT_KEY = "fuwari-local-content-v1";
 
   const $ = (sel, scope = document) => scope.querySelector(sel);
   const $$ = (sel, scope = document) => Array.from(scope.querySelectorAll(sel));
@@ -240,6 +241,13 @@
               `<button type="button" data-toast="${esc(link.toast || `记得去 ${link.label} 找我 ♥`)}">${esc(link.label)}<span>${esc(link.value)}</span></button>`
           )
           .join("");
+      // 站主入口：后台地址由 index.html 的配置脚本给出（服务器是 /admin.html，Pages 上是 /public/admin.html）
+      const adminUrl = String((window.FUWARI_CONFIG || {}).adminUrl || "admin.html");
+      const adminLink = document.createElement("a");
+      adminLink.className = "footer-admin";
+      adminLink.href = adminUrl;
+      adminLink.textContent = "✿ 管理后台";
+      links.append(adminLink);
     }
   }
 
@@ -513,9 +521,33 @@
 
   function withLocalNotes(content) {
     if (!STATIC() || !content) return content;
+    // 本机改过的整份内容（后台「只看本机」模式）优先，再用本地留言补上
+    const cached = readLocalContent();
+    const base = cached || content;
     const local = readLocalNotes();
-    if (!local.length) return content;
-    return { ...content, notes: local.concat(content.notes || []) };
+    if (!local.length) return base;
+    return { ...base, notes: local.concat(base.notes || []) };
+  }
+
+  /* --- 本机临时内容：静态托管没有后端时，后台可以只在当前浏览器里改 --- */
+
+  function readLocalContent() {
+    try {
+      const raw = localStorage.getItem(LOCAL_CONTENT_KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      return data && typeof data === "object" ? data : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function saveLocalContent(next) {
+    try {
+      localStorage.setItem(LOCAL_CONTENT_KEY, JSON.stringify(next));
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   function render(content, root) {
@@ -647,6 +679,8 @@
 
     // 渲染时把本地留言拼到前台留言列表最前面
     withLocalNotes: (content) => withLocalNotes(content),
+    saveLocalContent: (next) => saveLocalContent(next),
+    localContent: () => readLocalContent(),
 
     asset(url) {
       const text = String(url || "");

@@ -30,6 +30,8 @@
         cfg.dataUrl = cfg.dataUrl || "data/content.json";
         cfg.staticFallback = true;
       }
+      // 服务器 /admin.html、或静态托管上的 public/admin.html 都在前台目录的上一级
+      cfg.adminUrl = cfg.adminUrl || (/\/public\//.test(location.pathname) || location.protocol === "file:" ? "public/admin.html" : "admin.html");
     })();
   </script>
 </head>
